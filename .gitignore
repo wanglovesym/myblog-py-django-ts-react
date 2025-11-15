@@ -1,0 +1,16 @@
+# Django
+myblog-backend-django/db.sqlite3
+myblog-backend-django/.venv/
+myblog-backend-django/venv/
+myblog-backend-django/env/
+
+# React
+myblog-frontend-react/node_modules/
+myblog-frontend-react/dist/
+myblog-frontend-react/.vite/
+myblog-frontend-react/.env.local
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
