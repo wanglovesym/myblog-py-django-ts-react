@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h00h!9@xze!e2f(asev)2m#y@vh!2=tov#wzjy=i5j487ui+bp'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me-in-production!')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# 原写法（硬编码）
+# DEBUG = False
+# 新写法（环境变量）：
+# os.getenv('DEBUG', 'True'): 尝试从环境变量中读取 DEBUG 的值
+#       如果没设置（如本地开发），就用默认值 'True'
+# .lower() == 'true': 把值转成小写（'True' → 'true'）
+#       判断是否等于 'true'，结果是 True 或 False
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -37,14 +45,16 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles', # 确保 settings.py 启用了静态文件服务（开发模式）
     'rest_framework',
+    'django_filters',
     # 自定义app一定要放在最后
     'blog'
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', # corsheader 中间件，必须在顶部
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -60,19 +70,20 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173"
 ]
 
-# 终端输出 SQL 日志
-LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {'class': 'logging.StreamHandler'}
-    },
-    'loggers': {
-        'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'DEBUG'
+# 终端输出 SQL 日志（仅 DEBUG=True 时生效）
+if DEBUG:
+    LOGGING = {
+        'version': 1,
+        'handlers': {
+            'console': {'class': 'logging.StreamHandler'}
+        },
+        'loggers': {
+            'django.db.backends': {
+                'handlers': ['console'],
+                'level': 'DEBUG'
+            }
         }
     }
-}
 
 # 禁用 DRF 的 Browsable API
 REST_FRAMEWORK = {
@@ -80,6 +91,14 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer', # 只返回Json
         # 'rest_framework.renderers.BrowsableAPIRenderer',  # ← 注释掉这行
     ],
+    # 作用：声明 API 支持哪些筛选方式
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.SearchFilter',
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    # 作用：分页！避免一次返回 1000 篇文章导致页面卡死
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 ROOT_URLCONF = 'myblog.urls'
@@ -107,11 +126,21 @@ WSGI_APPLICATION = 'myblog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'myblog'), # 数据库名
+        'USER': os.getenv('POSTGRES_USER', 'jayden'), # 数据库用户名
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', '122398'), # 数据库密码
+        'HOST': os.getenv('DB_HOST', 'db'),  # docker-compose 服务名
+        'PORT': os.getenv('DB_PORT', '5432'),
+        # 在复用数据库连接前，先检查连接是否健康（防止 PostgreSQL 重启后 Django 用旧连接报错）
+        # 作用：开启连接健康检查，每次复用旧连接前，先检查：“这个连接还能用吗？”如果不能用（比如数据库重启了），自动重建新连接，不会报错
+        # 背景：
+        #   Django 默认每次请求都新建数据库连接（安全但慢）
+        #   你可以开启连接复用（CONN_MAX_AGE > 0）提升性能
+        #   但有个风险：数据库重启后，旧连接会失效
+        'CONN_HEALTH_CHECKS': True,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -137,7 +166,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -147,7 +176,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# 在开发环境下，Django 会自动从各 app 的 static 目录查找文件
+# 但我们也要明确指定静态文件目录
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # 如果你有项目级的静态文件
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

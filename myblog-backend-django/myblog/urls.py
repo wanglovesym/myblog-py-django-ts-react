@@ -19,6 +19,8 @@ Including another URLconf
 from django.contrib import admin
 # include：用于包含其他 app 的路由模块（必须导入！）
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,3 +35,12 @@ urlpatterns = [
     #   字符串格式：'<app_name>.urls'
     path('api/', include('blog.urls'))
 ]
+
+# static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# 仅在 DEBUG=True 时，添加静态文件服务路由
+# 注意：在 Docker 容器中，我们需要确保静态文件能被正确访问
+# if settings.DEBUG:
+#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+#     # 同时添加对 Django 自带静态文件的支持
+#     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+#     urlpatterns += staticfiles_urlpatterns()

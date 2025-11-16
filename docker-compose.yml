@@ -1,0 +1,80 @@
+# 可以省略，定义Compose 文件格式版本
+# Docker 官方自 2021 年起已弃用 version 字段
+# version: "3.8"
+
+# service 作用：定义要运行的服务（容器）列表
+# 本例包含两个服务：db（数据库） 和 web（Django）
+services:
+    # PostgreSQL 数据库
+    db:
+        # 作用：使用官方 PostgreSQL 15 镜像
+        image: postgres:16
+        # 作用：设置容器环境变量（PostgreSQL 初始化时使用）
+        # POSTGRES_DB：创建数据库 myblog
+        # POSTGRES_USER：创建用户 user
+        # POSTGRES_PASSWORD：设置密码 password
+        # 注意：可以自定义，但是修改后记得修改 myblog/setting.py 的DATABASE配置文件
+        environment:
+            POSTGRES_DB: myblog
+            POSTGRES_USER: jayden
+            POSTGRES_PASSWORD: 122398
+        # 作用：持久化数据库数据（即使容器删除，数据不丢失）
+        volumes:
+            # 命名卷（在 volumes 中定义）
+            # /var/lib/postgresql/data/：PostgreSQL 默认数据目录
+            - postgres_data:/var/lib/postgresql/data/
+        # 作用：将容器端口映射到主机
+        ports:
+            # "5432:5432"：主机 5432 → 容器 5432（PostgreSQL 默认端口）
+            # 开发用途：允许本地 pgAdmin 或 psql 直连数据库
+            - "5432:5432" # 本地可直连数据库（可选）
+
+    # Django 后端（开发模式）
+    web:
+        # 作用：从 myblog-backend-django/ 目录构建镜像（该目录需有 Dockerfile）
+        # 替代方案：若已构建镜像，可用 image: myblog-backend
+        build: ./myblog-backend-django
+        # 作用：覆盖 Dockerfile 中的默认命令（生产用 Gunicorn，开发用 runserver）
+        # 为什么用 0.0.0.0？监听所有网络接口（容器内），允许外部访问
+        command: >
+            sh -c "
+                python manage.py migrate &&
+                ./wait-for-db.sh db
+                python manage.py runserver 0.0.0.0:8000
+            "
+        # 作用：代码实时同步（开发关键！）
+        volumes:
+            # 主机目录 ./myblog-backend-django → 容器 /app
+            - ./myblog-backend-django:/app # 修改代码立即生效（无需重建镜像）
+        # 作用：映射 Django 端口
+        ports:
+            # "8000:8000"：主机 8000 → 容器 8000（Django 默认端口）
+            - "8000:8000"
+        # 作用：设置 Django 环境变量（替代 settings.py 中的硬编码）
+        environment:
+            # 开发模式（启用详细错误页）
+            - DEBUG=1
+            # 数据库连接字符串（db 是 Compose 服务名，自动 DNS 解析）
+            - POSTGRES_DB=myblog
+            - POSTGRES_USER=jayden
+            - POSTGRES_PASSWORD=122398
+            - DB_HOST=db
+            # 开发密钥（生产环境必须用随机密钥）
+            - SECRET_KEY=dev-secret-key-for-docker
+        # 作用：确保先启动 db 服务，再启动 web
+        # 注意：仅控制启动顺序，不等待数据库就绪（需 wait-for-it 脚本，但开发可省略）
+        depends_on:
+            - db
+        # 仅开发环境需要的额外依赖
+        # 作用：保持容器前台运行（类似 docker run -it）
+        # 开发用途：方便进入容器调试（docker-compose exec web bash）
+        stdin_open: true
+        tty: true
+
+# 作用：定义命名卷（Named Volume）
+# 为什么用命名卷？
+# 数据独立于容器生命周期
+# 避免权限问题（比绑定挂载更可靠）
+volumes:
+    # 持久化 PostgreSQL 数据
+    postgres_data:
