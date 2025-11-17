@@ -3,15 +3,24 @@ myblog-backend-django/db.sqlite3
 myblog-backend-django/.venv/
 myblog-backend-django/venv/
 myblog-backend-django/env/
-myblog-backend-django/myblog/__pycache__/
-myblog-backend-django/myblog/__pycache__/
-*.pyc
+myblog-backend-django/**/__pycache__/
+myblog-backend-django/**/*.pyc
+
+# Django 开发常见临时文件
+myblog-backend-django/.pytest_cache/
+myblog-backend-django/.coverage
+myblog-backend-django/htmlcov/
+myblog-backend-django/.python-version
 
 # React
 myblog-frontend-react/node_modules/
 myblog-frontend-react/dist/
 myblog-frontend-react/.vite/
+myblog-frontend-react/.env
 myblog-frontend-react/.env.local
+myblog-frontend-react/.env.development
+myblog-frontend-react/.eslintcache
+myblog-frontend-react/tsconfig.tsbuildinfo
 
 # IDE
 .vscode/
