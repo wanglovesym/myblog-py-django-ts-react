@@ -3,6 +3,9 @@ myblog-backend-django/db.sqlite3
 myblog-backend-django/.venv/
 myblog-backend-django/venv/
 myblog-backend-django/env/
+myblog-backend-django/myblog/__pycache__/
+myblog-backend-django/myblog/__pycache__/
+*.pyc
 
 # React
 myblog-frontend-react/node_modules/
