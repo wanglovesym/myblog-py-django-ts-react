@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+import dj_database_url # 尝试从 DATABASE_URL 环境变量读取数据库配置（用于生产环境）
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +23,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h00h!9@xze!e2f(asev)2m#y@vh!2=tov#wzjy=i5j487ui+bp'
+# 从环境变量 SECRET_KEY 读取，如果未设置则使用一个默认值（但生产环境务必设置）
+# 注意：your-fallback-secret-key-for-local-testing-only 只是本地测试用的后备值，部署时必须在 Render/Fly.io 的环境变量设置中提供一个真正的强密钥。
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your-fallback-secret-key-for-local-testing-only')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+# 例如，如果后端部署在 Render 上，URL 可能是 your-blog-backend.onrender.com
+# 前端 URL 可能是部署前端后获得的 vercel.app 地址
+# ALLOWED_HOSTS = ['your-blog-backend.onrender.com', 'myblog-py-django-ts-react.vercel.app']
+# 为了方便部署时配置，可以先使用一个环境变量来动态设置
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -106,10 +115,11 @@ WSGI_APPLICATION = 'myblog.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config( # 需要先安装这个库: pip install dj-database-url
+        default='sqlite:///db.sqlite3',  # 如果没有 DATABASE_URL 环境变量，则回退到 SQLite (开发用)
+        conn_max_age=600,  # 连接池设置
+        conn_health_checks=True,
+    )
 }
 
 
