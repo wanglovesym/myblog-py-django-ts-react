@@ -5,6 +5,7 @@ myblog-backend-django/venv/
 myblog-backend-django/env/
 myblog-backend-django/**/__pycache__/
 myblog-backend-django/**/*.pyc
+myblog-backend-django/staticfiles/
 
 # Django 开发常见临时文件
 myblog-backend-django/.pytest_cache/
