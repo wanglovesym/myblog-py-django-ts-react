@@ -35,7 +35,8 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 # 前端 URL 可能是部署前端后获得的 vercel.app 地址
 # ALLOWED_HOSTS = ['your-blog-backend.onrender.com', 'myblog-py-django-ts-react.vercel.app']
 # 为了方便部署时配置，可以先使用一个环境变量来动态设置
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+# 当环境变量为空时，避免返回 [''] 并提供合理默认
+ALLOWED_HOSTS = [h for h in os.environ.get('ALLOWED_HOSTS', '').split(',') if h] or ['localhost', '127.0.0.1']
 # ALLOWED_HOSTS = ['*']  # 注意：生产环境请务必设置具体的域名，避免安全风险！
 
 # Application definition
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', # corsheader 中间件，必须在顶部
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -159,8 +161,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+# Use WhiteNoise's storage backend to serve compressed static files with cache-friendly names
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Production security settings: only enable when DEBUG is False
+if not DEBUG:
+    # Redirect HTTP to HTTPS (Render terminates TLS at the load balancer; enable if using TLS)
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # HSTS: tell browsers to use HTTPS for future requests
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # Add any other production-only security settings as required
