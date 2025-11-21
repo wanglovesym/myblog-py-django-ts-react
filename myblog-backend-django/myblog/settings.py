@@ -28,14 +28,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-fallback-secret-key-for-local-testing-only')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# 作用：从环境变量 DEBUG 读取，默认为 False
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # 例如，如果后端部署在 Render 上，URL 可能是 your-blog-backend.onrender.com
 # 前端 URL 可能是部署前端后获得的 vercel.app 地址
 # ALLOWED_HOSTS = ['your-blog-backend.onrender.com', 'myblog-py-django-ts-react.vercel.app']
 # 为了方便部署时配置，可以先使用一个环境变量来动态设置
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
-
+# ALLOWED_HOSTS = ['*']  # 注意：生产环境请务必设置具体的域名，避免安全风险！
 
 # Application definition
 
