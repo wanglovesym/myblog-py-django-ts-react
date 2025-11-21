@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import type { Post } from '../types';
 import axios from 'axios';
 import CategoryList from "../components/CategoryList";
-import TagList from "../components/TagLIst";
+import TagList from "../components/TagList";
 
 // export: 将函数、变量、类等导出，供其他文件导入（import）使用。
 // export default：一个文件只能有一个 default 导出，导入时可自定义名字。

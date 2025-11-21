@@ -22,7 +22,7 @@ export default function TagPostList() {
                 // 获取所属 tag 的文章列表
                 const postRes = await axios.get<Post[]>('/api/posts/', {
                     params: {
-                        tag: tagId,
+                        tags: tagId,
                     }
                 })
                 setPosts(postRes.data);
