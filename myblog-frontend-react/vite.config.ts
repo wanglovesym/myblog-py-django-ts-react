@@ -7,7 +7,8 @@ export default defineConfig({
     server: {
         proxy: {
             "/api": {
-                target: "http://localhost:8000",
+                // target: "http://localhost:8000",
+                target: "https://myblog-backend-django.onrender.com",
                 changeOrigin: true
             }
         }
