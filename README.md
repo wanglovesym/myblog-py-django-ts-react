@@ -117,15 +117,28 @@ to run the entire stack (Django + PostgreSQL + React dev server) in one command.
 
 ## 📦 Deployment
 
-- **Frontend**: Deploy to [Vercel ](https://vercel.com/)(free, automatic HTTPS, global CDN)
-- **Backend**: Deploy to [Render ](https://render.com/)or [Fly.io ](https://fly.io/)(free tier available)
+### Frontend
+Deploy to [Vercel](https://vercel.com/) (free, automatic HTTPS, global CDN)
 
-> "📌 **Note**: Before production deployment, remember to: "
->
-> - Set `DEBUG = False`
-> - Configure `ALLOWED_HOSTS`
-> - Use `SECRET_KEY` from environment variable
-> - Replace SQLite with PostgreSQL
+### Backend
+Deploy to [Render](https://render.com/) or [Fly.io](https://fly.io/) (free tier available)
+
+**Render Build Command:**
+```bash
+pip install -r requirements.txt && python manage.py collectstatic --noinput
+```
+
+**Render Start Command:**
+```bash
+gunicorn myblog.wsgi:application
+```
+
+**Required Environment Variables:**
+- `SECRET_KEY` - Your Django secret key (generate a strong random key)
+- `ALLOWED_HOSTS` - Your deployment domain (e.g., `your-app.onrender.com`)
+- `DATABASE_URL` - PostgreSQL connection string (optional, defaults to SQLite)
+
+> 📌 **Note**: The project is pre-configured with WhiteNoise for serving static files in production. No additional web server configuration is needed for CSS/JS files.
 
 ---
 
