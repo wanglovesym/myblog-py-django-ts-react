@@ -1,10 +1,13 @@
 # Django
 myblog-backend-django/db.sqlite3
+myblog-backend-django/*.sqlite3
 myblog-backend-django/.venv/
 myblog-backend-django/venv/
 myblog-backend-django/env/
 myblog-backend-django/**/__pycache__/
 myblog-backend-django/**/*.pyc
+myblog-backend-django/staticfiles/
+**/staticfiles/
 
 # Django 开发常见临时文件
 myblog-backend-django/.pytest_cache/
