@@ -1,0 +1,28 @@
+# ============================================================
+# React 前端开发环境 Dockerfile
+# ============================================================
+
+# 使用 Node.js 24 的 Alpine 镜像
+FROM node:24-alpine
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制 package.json 和 package-lock.json
+# 先复制依赖文件，利用缓存机制
+COPY package*.json ./
+
+# 安装依赖
+# 开发环境需要所有依赖（包括 devDependencies）
+# RUN npm install
+RUN npm ci || npm install
+
+# 复制源代码（实际会被 volume 挂载覆盖，但保留以防单独运行）
+COPY . .
+
+# 暴露 Vite 开发服务器端口
+EXPOSE 5173
+
+# 启动 Vite 开发服务器
+# --host 0.0.0.0：允许容器外部访问
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

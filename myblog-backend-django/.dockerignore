@@ -1,0 +1,47 @@
+# ============================================================
+# Docker 构建时忽略的文件/目录
+# ============================================================
+# 作用：减少构建上下文体积，加速镜像构建，避免敏感信息泄露
+
+# Python 字节码文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 环境变量文件（包含敏感信息，不应进入镜像）
+.env*
+.envrc
+
+# Git 版本控制文件
+.git
+.gitignore
+
+# SQLite 数据库文件（容器内会重新创建或连接外部数据库）
+db.sqlite3
+*.sqlite3
+
+# Django 收集的静态文件（生产环境会重新 collectstatic）
+staticfiles/
+
+# 媒体文件（应该挂载卷或使用对象存储）
+media/
+
+# IDE 配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS 系统文件
+.DS_Store
+
+# 测试和覆盖率文件
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 虚拟环境（容器内有自己的环境）
+venv/
+env/
+ENV/

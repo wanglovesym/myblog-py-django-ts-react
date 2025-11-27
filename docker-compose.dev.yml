@@ -1,0 +1,82 @@
+# ============================================================
+# Docker Compose 配置文件 - 开发环境版本
+# ============================================================
+# version 不再是必需字段（Docker Compose v2 自动识别）
+# 如果使用旧版 Compose，可添加：version: '3.8'
+
+# services 定义了多个容器（服务），每个服务是一个独立的应用
+services:
+    # ========== 后端服务（Django） ==========
+    backend:
+        # build 指定如何构建镜像
+        build:
+            # context：构建上下文路径（Dockerfile 所在目录）
+            context: ./myblog-backend-django
+            # 默认会使用该目录下的 Dockerfile
+
+        # 容器名称（方便在日志和网络中识别）
+        container_name: myblog-backend
+
+        # 工作目录（容器内执行命令的默认路径）
+        working_dir: /app
+
+        # 覆盖 Dockerfile 中的 CMD，改为开发模式命令
+        # python manage.py runserver：Django 自带开发服务器
+        # 0.0.0.0:8000：监听所有网络接口的 8000 端口（容器内部）
+        command: python manage.py runserver 0.0.0.0:8000
+
+        # 端口映射：将容器内的 8000 端口映射到主机的 8000 端口
+        # 格式："主机端口:容器端口"
+        # 访问 http://localhost:8000 即可访问后端
+        ports:
+            - "8000:8000"
+
+        # 从文件加载环境变量（稍后会创建 .env.dev.django）
+        # 这些变量会注入到容器中，Django 通过 os.getenv() 读取
+        env_file:
+            - .env.dev.django
+
+        # 挂载卷（volume）：将主机目录映射到容器内
+        # 格式："主机路径:容器路径"
+        # 这样修改主机代码会立即同步到容器，实现热重载
+        volumes:
+            - ./myblog-backend-django:/app
+
+    # ========== 前端服务（React + Vite） ==========
+    frontend:
+        # 同样指定构建上下文
+        build:
+            context: ./myblog-frontend-react
+            dockerfile: Dockerfile.dev
+
+        container_name: myblog-frontend
+
+        working_dir: /app
+
+        # 环境变量：告诉 Vite 后端地址
+        # Docker 网络中使用服务名 backend 访问后端容器
+        environment:
+            - VITE_BACKEND_HOST=http://backend:8000
+
+        # 覆盖 Dockerfile 的 CMD，使用 Vite 开发服务器
+        # npm run dev：启动 Vite 开发服务器
+        # -- --host 0.0.0.0：允许外部访问（Docker 网络需要）
+        # --port 5173：指定端口（Vite 默认就是 5173）
+        # command: npm run dev -- --host 0.0.0.0 --port 5173  # ← 可以删除 command，因为 Dockerfile.dev 已经包含了
+
+        # 前端映射 5173 端口
+        # 访问 http://localhost:5173 即可看到前端页面
+        ports:
+            - "5173:5173"
+
+        # 挂载前端代码目录，实现代码热重载
+        volumes:
+            - ./myblog-frontend-react:/app
+            # 重要技巧：排除 node_modules，避免主机和容器的依赖冲突
+            # 容器内的 node_modules 由容器自己管理，不与主机共享
+            - /app/node_modules
+
+        # depends_on：定义服务启动顺序
+        # 前端依赖后端，所以会等后端先启动（注意：只保证启动顺序，不保证后端已就绪）
+        depends_on:
+            - backend

@@ -7,7 +7,10 @@ export default defineConfig({
     server: {
         proxy: {
             "/api": {
-                target: "http://localhost:8000",
+                // Docker 环境下使用服务名 backend，本地开发使用 localhost
+                // 通过环境变量 VITE_BACKEND_HOST 控制（默认 localhost）
+                target:
+                    process.env.VITE_BACKEND_HOST || "http://localhost:8000",
                 changeOrigin: true
             }
         }
