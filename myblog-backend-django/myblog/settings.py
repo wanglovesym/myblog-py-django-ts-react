@@ -178,6 +178,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# 生产环境静态文件收集目录
+# collectstatic 命令会将所有静态文件复制到这里
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# 媒体文件配置（用户上传的文件）
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

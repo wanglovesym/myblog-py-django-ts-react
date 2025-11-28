@@ -20,6 +20,11 @@ myblog-backend-django/.python-version
 .env.prod.django
 .env*.local
 
+# Docker 备份文件
+backup*.sql
+backup*.sql.gz
+backups/
+
 # React
 myblog-frontend-react/node_modules/
 myblog-frontend-react/dist/
