@@ -1,8 +1,8 @@
-# Docker 开发环境完整使用指南
+# Docker 开发与生产环境使用指南
 
 ## 📋 概述
 
-本项目使用 Docker Compose 实现开发环境容器化，支持前后端热重载、数据库持久化与快速启动。
+本项目使用 Docker Compose 实现开发/生产环境容器化，开发环境支持前后端热重载；生产环境提供反向代理、独立前端静态站与后端 API 服务。
 
 **技术栈**
 
@@ -21,20 +21,25 @@
 
 ```
 myblog-py-django-ts-react/
-├── myblog-backend-django/          # Django 后端
-│   ├── Dockerfile                  # 后端生产镜像（支持 Postgres）
-│   ├── .dockerignore               # 构建时忽略的文件
-│   ├── requirements.txt            # Python 依赖（含 psycopg 3）
-│   └── myblog/settings.py          # 支持环境变量配置
-├── myblog-frontend-react/          # React 前端
-│   ├── Dockerfile                  # 前端生产镜像（Nginx）
-│   ├── Dockerfile.dev              # 前端开发镜像（Vite）
-│   ├── .dockerignore               # 构建时忽略的文件
-│   └── vite.config.ts              # 代理配置（/api → backend）
-├── docker-compose.dev.yml          # 开发环境编排
-├── .env.dev.django                 # 后端环境变量（不提交）
-├── .env.dev.django.example         # 环境变量模板
-└── DOCKER_DEV_GUIDE.md             # 本文档
+├── myblog-backend-django/           # Django 后端
+│   ├── Dockerfile                   # 后端生产镜像（Gunicorn + Postgres）
+│   ├── .dockerignore                # 构建忽略
+│   ├── requirements.txt             # Python 依赖（含 psycopg 3）
+│   └── myblog/settings.py           # 支持环境变量配置（DEBUG/DB/CORS/STATIC_ROOT 等）
+├── myblog-frontend-react/           # React 前端
+│   ├── Dockerfile                   # 前端生产镜像（Node 构建 → Nginx 静态）
+│   ├── Dockerfile.dev               # 前端开发镜像（Vite 热更）
+│   ├── nginx.conf                   # 前端 Nginx（SPA 回退、gzip、缓存）
+│   └── vite.config.ts               # 代理配置（/api → backend）
+├── deploy/
+│   └── nginx.conf                   # 反代（/api → backend，/ → frontend，HTTP/未来 HTTPS）
+├── docker-compose.dev.yml           # 开发编排（Vite + runserver + Postgres）
+├── docker-compose.prod.yml          # 生产编排（Proxy + Frontend + Backend + Postgres）
+├── .env.dev.django                  # 开发环境变量（不提交）
+├── .env.dev.django.example          # 开发环境变量模板
+├── .env.prod.django                 # 生产环境变量（不提交）
+├── .env.prod.django.example         # 生产环境变量模板
+└── DOCKER_DEV_GUIDE.md              # 本文档
 ```
 
 ---
@@ -148,7 +153,7 @@ docker compose -f docker-compose.dev.yml down -v
 
 ---
 
-## 🌐 访问地址
+## 🌐 访问地址（开发）
 
 | 服务         | 地址                         | 说明            |
 | ------------ | ---------------------------- | --------------- |
@@ -196,7 +201,7 @@ docker compose -f docker-compose.dev.yml build --no-cache frontend
 
 ---
 
-## 🛠️ 常用命令
+## 🛠️ 常用命令（开发）
 
 ### 容器管理
 
@@ -335,7 +340,7 @@ docker compose -f docker-compose.dev.yml exec backend python manage.py migrate
 
 ---
 
-## ✅ 验证清单
+## ✅ 验证清单（开发）
 
 启动后依次检查：
 
@@ -380,31 +385,91 @@ gh pr create --base main --head dev/docker --title "Docker 容器化" --fill
 
 ---
 
-## 🚢 下一步：生产环境
+## 🚢 生产环境
 
-开发环境验证通过后，可以继续：
+生产环境已提供完整编排（`docker-compose.prod.yml`），架构为：
 
-1. **创建 `docker-compose.prod.yml`**
+-   反向代理 `proxy`（Nginx）统一入口：`/api` → 后端，其他路径 → 前端静态
+-   前端 `frontend`（Nginx）提供 React 构建产物，包含 SPA 路由回退、gzip、静态缓存
+-   后端 `backend`（Gunicorn）运行 Django 应用
+-   数据库 `db`（PostgreSQL 16）仅在容器网络内可访问
 
-    - Gunicorn 替代 runserver
-    - Nginx 反向代理（HTTPS 终止）
-    - 前端静态文件优化
+### 1) 准备环境变量
 
-2. **环境变量管理**
+```bash
+cp .env.prod.django.example .env.prod.django
+```
 
-    - `.env.prod.django`（生产配置）
-    - 敏感信息用 Secrets 管理
+至少需要修改：
 
-3. **CI/CD**
+-   `DJANGO_SECRET_KEY`：使用随机长字符串（见模板生成方法）
+-   `ALLOWED_HOSTS`：生产域名或服务器 IP（用逗号分隔）
+-   `POSTGRES_PASSWORD`：强密码（不要使用默认值）
 
-    - GitHub Actions 自动构建镜像
-    - 推送到 Docker Hub / GHCR
-    - 自动部署到 VPS / 云平台
+### 2) 启动生产环境
 
-4. **部署平台选择**
-    - VPS + Docker Compose（最灵活）
-    - Render / Fly.io（托管容器）
-    - Kubernetes（大规模）
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+首次部署后执行：
+
+```bash
+# 迁移数据库
+docker compose -f docker-compose.prod.yml exec backend python manage.py migrate
+
+# 创建管理员
+docker compose -f docker-compose.prod.yml exec backend python manage.py createsuperuser
+
+# 收集静态（Django Admin 等）
+docker compose -f docker-compose.prod.yml exec backend python manage.py collectstatic --noinput
+```
+
+> 提示：生产默认未对外提供 Django 静态文件。若需要 Admin 静态资源：
+>
+> -   方案 A（简洁）：引入 WhiteNoise 由 Django 直接服务静态
+> -   方案 B：在 proxy 中新增静态目录映射（挂载 `staticfiles` 卷并配置 `location /static/`）
+
+### 3) 访问地址（生产）
+
+-   站点首页（前端）：`http://<你的域名或服务器IP>/`
+-   API：`http://<你的域名或服务器IP>/api/`
+-   Admin 后台：默认未代理 `/admin/`，如需在生产访问，请在 `deploy/nginx.conf` 增加：
+
+```nginx
+# 在 server { } 内新增
+location /admin/ {
+    proxy_pass http://backend_upstream;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+并确保静态文件可用（见上文 WhiteNoise 或 Nginx 静态方案）。
+
+### 4) 健康检查与日志
+
+```bash
+# 查看健康状态
+docker compose -f docker-compose.prod.yml ps
+
+# 查看日志
+docker compose -f docker-compose.prod.yml logs -f proxy
+docker compose -f docker-compose.prod.yml logs -f backend
+docker compose -f docker-compose.prod.yml logs -f frontend
+docker compose -f docker-compose.prod.yml logs -f db
+```
+
+### 5) 安全检查（上线前必看）
+
+-   `DEBUG=0`（生产必须关闭调试）
+-   `DJANGO_SECRET_KEY` 已设置为强随机值
+-   `ALLOWED_HOSTS` 填写了你的域名/IP
+-   `POSTGRES_PASSWORD` 为强密码，且数据库未对外暴露端口
+-   CORS 策略合理（生产不要 `CORS_ALLOW_ALL_ORIGINS=true`）
+-   计划启用 HTTPS（证书挂载见 `deploy/nginx.conf` 注释）
 
 ---
 
@@ -414,6 +479,7 @@ gh pr create --base main --head dev/docker --title "Docker 容器化" --fill
 -   [Django 部署检查清单](https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/)
 -   [Vite 代理配置](https://vite.dev/config/server-options.html#server-proxy)
 -   [PostgreSQL Docker Hub](https://hub.docker.com/_/postgres)
+-   [WhiteNoise 文档（Django 静态）](https://whitenoise.evans.io/en/stable/)
 
 ---
 
@@ -426,6 +492,6 @@ gh pr create --base main --head dev/docker --title "Docker 容器化" --fill
 
 ---
 
-**文档版本**：1.0  
-**最后更新**：2025-11-27  
+**文档版本**：1.1  
+**最后更新**：2025-11-28  
 **维护者**：开发团队
