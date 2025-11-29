@@ -63,15 +63,20 @@ MIDDLEWARE = [
 ]
 
 # corsheader 配置
-# 开发环境可以允许所有来源（CORS_ALLOW_ALL_ORIGINS=true）
-# 生产环境应该设置为 false，并使用 CORS_ALLOWED_ORIGINS 指定域名
+# 逻辑：
+# 1. 如果 CORS_ALLOW_ALL_ORIGINS=true → 放开全部来源（仅开发建议）
+# 2. 否则读取 CORS_ALLOWED_ORIGINS（逗号分隔），若为空回退到本地开发白名单
 if os.getenv('CORS_ALLOW_ALL_ORIGINS', 'false').lower() == 'true':
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173"
-    ]
+    origins_env = os.getenv('CORS_ALLOWED_ORIGINS')
+    if origins_env:
+        CORS_ALLOWED_ORIGINS = [o.strip() for o in origins_env.split(',') if o.strip()]
+    else:
+        CORS_ALLOWED_ORIGINS = [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173"
+        ]
 
 # 终端输出 SQL 日志
 LOGGING = {

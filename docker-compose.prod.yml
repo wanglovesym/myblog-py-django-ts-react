@@ -14,14 +14,12 @@ services:
     db:
         image: postgres:16 # 使用官方 Postgres 16 镜像（稳定版）
         container_name: myblog-db-prod
-
-        # 环境变量：初始化数据库用户与数据库名
+        # 共享同一生产 env 文件，避免密码不一致
+        env_file:
+            - .env.prod.django
         environment:
-            POSTGRES_DB: myblog # 数据库名
-            POSTGRES_USER: myblog # 用户名
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme} # 密码（从宿主环境变量读取，默认 changeme）
-            # 生产建议：在宿主机设置 export POSTGRES_PASSWORD=<强密码>
-            # 或通过 Docker Secrets 管理（需 Swarm/K8s）
+            POSTGRES_DB: myblog
+            POSTGRES_USER: myblog
 
         # 卷挂载：持久化数据库数据
         volumes:
@@ -82,10 +80,9 @@ services:
 
         restart: unless-stopped
 
-        # 可选：挂载静态/媒体文件卷（如需后端提供 collectstatic）
-        # volumes:
-        #   - static_files:/app/staticfiles       # Django 收集的静态文件
-        #   - media_files:/app/media              # 用户上传的媒体文件
+        # 挂载静态文件卷：用于 Django collectstatic 结果共享给 proxy 提供 /static/
+        volumes:
+            - static_files:/app/staticfiles # STATIC_ROOT 实际路径
 
     # ========== 前端服务（Nginx 静态站） ==========
     frontend:
@@ -116,6 +113,7 @@ services:
         # 挂载自定义配置
         volumes:
             - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro # 只读挂载配置文件
+            - static_files:/var/www/myblog/static:ro # 供 Nginx 直接提供 Django 收集后的静态资源
             # 如需 HTTPS，挂载证书：
             # - ./deploy/certs:/etc/nginx/certs:ro
 
@@ -150,6 +148,6 @@ volumes:
         #   o: addr=192.168.1.100,rw
         #   device: ":/path/to/nfs/share"
 
-    # 如需静态/媒体文件持久化（取消注释）
-    # static_files:
-    # media_files:
+    # 静态文件卷（Django collectstatic 输出）
+    static_files:
+    # 如后续需要媒体文件，再添加 media_files 卷并在 backend + proxy 中挂载
