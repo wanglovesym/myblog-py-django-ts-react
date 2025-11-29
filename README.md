@@ -217,6 +217,47 @@ PostgreSQL
 
 ---
 
+## 🌐 Frontend on Vercel (Recommended)
+
+This project supports deploying the frontend to **Vercel** for global CDN acceleration and zero-ops hosting while keeping the backend on your server.
+
+- **Environment variables**
+	- Frontend reads `VITE_API_BASE_URL` to locate the backend API
+	- Local dev: `http://localhost:8000`
+	- Production: `https://api.wangshixin.me`
+
+- **Files added**
+	- `myblog-frontend-react/src/config/api.ts`: Centralized API base URL config
+	- `.env.development` / `.env.production`: Environment variable templates
+	- `myblog-frontend-react/vercel.json`: SPA fallback routing (see below)
+
+- **SPA routing fallback (fixes 404 on deep links)**
+	- Symptom: direct visits like `/post/<slug>` return 404 on Vercel
+	- Fix: add `vercel.json` to rewrite unmatched routes to `/index.html`
+	- Behavior: static assets resolve via filesystem first, then fallback to SPA
+
+```json
+{
+	"routes": [
+		{ "handle": "filesystem" },
+		{ "src": "/(.*)", "dest": "/index.html" }
+	]
+}
+```
+
+- **Backend CORS/CSRF**
+	- `CORS_ALLOWED_ORIGINS` must include your frontend domains
+	- `CSRF_TRUSTED_ORIGINS` must include both API and frontend HTTPS domains
+
+- **Custom domain**
+	- Bind `www.wangshixin.me` in Vercel → Domains
+	- DNS: CNAME `www` → `cname.vercel-dns.com` (recommended) or A `76.76.21.21`
+	- HTTPS is auto-provisioned via Let's Encrypt
+
+> For a step-by-step guide, see `myblog-frontend-react/VERCEL_DEPLOYMENT.md`.
+
+---
+
 ## 🛠️ Built With
 
 ### Backend
