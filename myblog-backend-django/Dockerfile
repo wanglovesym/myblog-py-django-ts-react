@@ -22,11 +22,13 @@ WORKDIR /app
 # 安装系统依赖（PostgreSQL 客户端库和编译工具）需在pip install之前安装
 # libpq-dev：PostgreSQL 客户端开发库（psycopg 需要）
 # gcc：C 编译器（编译 psycopg 的 C 扩展需要）
+# curl：用于健康检查
 # --no-install-recommends：只安装必需依赖，减少镜像体积
 # rm -rf /var/lib/apt/lists/*：删除 apt 缓存，进一步减小体积
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # 先复制依赖清单文件（利用 Docker 缓存机制）

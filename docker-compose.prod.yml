@@ -74,19 +74,17 @@ services:
             db:
                 condition: service_healthy # 确保数据库就绪
 
-        # 健康检查：通过访问应用 /api/health/ 验证 HTTP 与数据库链路
+        # 健康检查:通过访问应用 /api/health/ 验证 HTTP 与数据库链路
         healthcheck:
             test:
                 [
-                    "CMD",
-                    "python",
-                    "-c",
-                    "import urllib.request,sys;\nreq=urllib.request.Request('http://localhost:8000/api/health/',headers={'Host':'api.wangshixin.me'});\nurllib.request.urlopen(req)"
+                    "CMD-SHELL",
+                    "curl -fsS -H 'Host: api.wangshixin.me' http://localhost:8000/api/health/ || exit 1"
                 ]
-            interval: 30s
+            interval: 15s
             timeout: 5s
-            retries: 3
-            start_period: 30s
+            retries: 5
+            start_period: 40s
 
         restart: unless-stopped
 
