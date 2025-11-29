@@ -110,8 +110,8 @@ else:
             "http://127.0.0.1:5173",
             # 生产环境（Vercel 部署）
             "https://www.wangshixin.me",  # 自定义域名
-            # 如果你还有 Vercel 默认域名，也可以加上：
-            # "https://myblog-frontend.vercel.app",
+            # 如果还有 Vercel 默认域名，也可以加上：
+            "https://wangshixin-blog.vercel.app",
         ]
 
 # ============================================================
