@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import type { Tag } from "../types"
+// 引入 API 配置：统一管理后端地址
+import { API_URL } from '../config/api';
 
 // 用于获取文章标签列表
 export default function TagList() {
@@ -10,7 +12,8 @@ export default function TagList() {
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await axios.get<Tag[]>('/api/tags/');
+                // 使用动态配置的 API 地址
+                const response = await axios.get<Tag[]>(`${API_URL}/tags/`);
                 setTags(response.data);
             } catch (error) {
                 console.error("获取标签列表失败:", error);

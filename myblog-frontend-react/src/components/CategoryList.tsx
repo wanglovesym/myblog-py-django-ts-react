@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import type { Category } from "../types";
+// 引入 API 配置：统一管理后端地址
+import { API_URL } from '../config/api';
 
 // 用于获取类型列表
 export default function CategoryList() {
@@ -11,7 +13,8 @@ export default function CategoryList() {
 
         const fetchCategories = async () => {
             try {
-                const response = await axios.get<Category[]>('/api/categories/');
+                // 使用动态配置的 API 地址
+                const response = await axios.get<Category[]>(`${API_URL}/categories/`);
                 setCategories(response.data);
             } catch (error) {
                 console.error('获取分类列表失败:', error);

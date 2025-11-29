@@ -7,6 +7,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+// 引入 API 配置：统一管理后端地址
+import { API_URL } from '../config/api';
 
 export default function Post() {
     // 用于请求 /api/posts/${slug}/
@@ -20,7 +22,8 @@ export default function Post() {
 
         const fetchPost = async () => {
             try {
-                const response = await axios.get<Post>(`/api/posts/${slug}/`);
+                // 使用动态 API 地址，slug 是文章的唯一标识（如 'my-first-post'）
+                const response = await axios.get<Post>(`${API_URL}/posts/${slug}/`);
                 const postData = response.data;
                 setPost(response.data);
 

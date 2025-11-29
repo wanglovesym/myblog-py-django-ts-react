@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import type { Post } from '../types'
+// 引入 API 配置：统一管理后端地址
+import { API_URL } from '../config/api';
 
 export default function SearchResult() {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -31,11 +33,15 @@ export default function SearchResult() {
         const fetchSearchResults = async () => {
             try {
                 /**
-                 * 发送Get请求到 /api/posts/
+                 * 发送Get请求到后端搜索接口
                  * 自动附加查询参数: ?search=关键词
                  * 泛型 <Post[]> 告诉Typescript响应数据类型
+                 * 
+                 * 使用 API_URL 确保在不同环境下都能正确访问：
+                 * - 开发：http://localhost:8000/api/posts/?search=xxx
+                 * - 生产：https://api.wangshixin.me/api/posts/?search=xxx
                  */
-                const response = await axios.get<Post[]>(`/api/posts/`, {
+                const response = await axios.get<Post[]>(`${API_URL}/posts/`, {
                     params: { search: query },
                 });
                 setPosts(response.data);

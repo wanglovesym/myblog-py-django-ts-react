@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import type { Post, Category } from "../types";
+// 引入 API 配置：统一管理后端地址
+import { API_URL } from '../config/api';
 
 export default function CategoryPostList() {
     // const { id: categoryId } = useParams<{ id: string }>();
@@ -15,13 +17,13 @@ export default function CategoryPostList() {
 
         const fetchPostByCategory = async () => {
             try {
-                // 获取类型名称
-                const categoryRes = await axios.get<Category>(`/api/categories/${categoryId}`)
+                // 获取类型名称（使用动态 API 地址）
+                const categoryRes = await axios.get<Category>(`${API_URL}/categories/${categoryId}`)
                 setCategoryName(categoryRes.data.name);
 
                 // 获取类型下所有文章
-                // const PostRes = await axios.get<Post[]>(`/api/posts/?category=${categoryId}`);
-                const postsRes = await axios.get<Post[]>('/api/posts/', {
+                // params 会自动拼接成 ?category=1 这样的查询参数
+                const postsRes = await axios.get<Post[]>(`${API_URL}/posts/`, {
                     params: { category: categoryId },
                 })
                 setPosts(postsRes.data);

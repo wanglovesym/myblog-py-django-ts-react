@@ -7,6 +7,8 @@ import type { Post } from '../types';
 import axios from 'axios';
 import CategoryList from "../components/CategoryList";
 import TagList from "../components/TagList";
+// 引入 API 配置：统一管理后端地址，支持开发/生产环境自动切换
+import { API_URL } from '../config/api';
 
 // export: 将函数、变量、类等导出，供其他文件导入（import）使用。
 // export default：一个文件只能有一个 default 导出，导入时可自定义名字。
@@ -41,8 +43,12 @@ export default function Home() {
                  * 一个流行的 HTTP 客户端库，用于发送请求（GET/POST 等）。
                  * 比原生 fetch 更强大：自动 JSON 转换、拦截器、类型支持等。
                  * .get<Post[]>: 指定响应数据类型为 Post 数组，启用类型检查。
+                 * 
+                 * 使用 API_URL：
+                 * - 开发环境：http://localhost:8000/api/posts/
+                 * - 生产环境：https://api.wangshixin.me/api/posts/
                  */
-                const response = await axios.get<Post[]>('/api/posts/'); // res.data 类型：Post[]
+                const response = await axios.get<Post[]>(`${API_URL}/posts/`); // res.data 类型：Post[]
                 setPosts(response.data);
             } catch (error) {
                 console.error('获取文章列表失败:', error);

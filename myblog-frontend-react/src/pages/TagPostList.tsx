@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import type { Post, Tag } from "../types";
+// 引入 API 配置：统一管理后端地址
+import { API_URL } from '../config/api';
 
 // TODO: 报错获取文章列表失败
 export default function TagPostList() {
@@ -15,12 +17,12 @@ export default function TagPostList() {
 
         const fetchPostsByTag = async () => {
             try {
-                // 获取 Tag 名字
-                const tagNameRes = await axios.get<Tag>(`/api/tags/${tagId}`);
+                // 获取 Tag 名字（使用动态 API 地址）
+                const tagNameRes = await axios.get<Tag>(`${API_URL}/tags/${tagId}`);
                 setTagName(tagNameRes.data.name);
 
                 // 获取所属 tag 的文章列表
-                const postRes = await axios.get<Post[]>('/api/posts/', {
+                const postRes = await axios.get<Post[]>(`${API_URL}/posts/`, {
                     params: {
                         tags: tagId,
                     }

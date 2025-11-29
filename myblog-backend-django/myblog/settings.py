@@ -62,21 +62,72 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# corsheader 配置
-# 逻辑：
-# 1. 如果 CORS_ALLOW_ALL_ORIGINS=true → 放开全部来源（仅开发建议）
-# 2. 否则读取 CORS_ALLOWED_ORIGINS（逗号分隔），若为空回退到本地开发白名单
+# ============================================================
+# CORS 配置（跨域资源共享）
+# ============================================================
+# 📌 什么是 CORS？
+# 
+# CORS (Cross-Origin Resource Sharing) 是浏览器的安全机制。
+# 
+# 跨域场景：
+# - 前端在 https://www.wangshixin.me（Vercel）
+# - 后端在 https://api.wangshixin.me（你的服务器）
+# - 两者域名不同，浏览器会阻止前端 JS 调用后端 API
+# 
+# 解决方案：
+# 后端需要在响应头添加 Access-Control-Allow-Origin: https://www.wangshixin.me
+# 告诉浏览器"允许这个前端域名访问我"
+# 
+# ============================================================
+# 📚 配置逻辑说明
+# ============================================================
+# 
+# 1. 环境变量优先：
+#    CORS_ALLOW_ALL_ORIGINS=true → 允许所有域名（⚠️ 仅开发环境！）
+# 
+# 2. 白名单模式：
+#    CORS_ALLOWED_ORIGINS=https://a.com,https://b.com → 只允许指定域名
+# 
+# 3. 默认本地开发：
+#    如果都没设置，使用 localhost:5173（Vite 默认开发端口）
+# 
+# ============================================================
+
 if os.getenv('CORS_ALLOW_ALL_ORIGINS', 'false').lower() == 'true':
+    # 开发模式：允许所有来源（不推荐生产环境！）
     CORS_ALLOW_ALL_ORIGINS = True
 else:
+    # 生产模式：只允许白名单域名
     origins_env = os.getenv('CORS_ALLOWED_ORIGINS')
     if origins_env:
+        # 从环境变量读取，支持逗号分隔多个域名
         CORS_ALLOWED_ORIGINS = [o.strip() for o in origins_env.split(',') if o.strip()]
     else:
+        # 默认白名单：本地开发 + 生产前端域名
         CORS_ALLOWED_ORIGINS = [
-            "http://localhost:5173",
-            "http://127.0.0.1:5173"
+            # 本地开发（npm run dev）
+            "http://localhost:5173",      # Vite 默认端口
+            "http://127.0.0.1:5173",
+            # 生产环境（Vercel 部署）
+            "https://www.wangshixin.me",  # 自定义域名
+            # 如果你还有 Vercel 默认域名，也可以加上：
+            # "https://myblog-frontend.vercel.app",
         ]
+
+# ============================================================
+# 💡 常见问题
+# ============================================================
+# 
+# Q1: 为什么前端请求报错 "CORS policy blocked"？
+# A1: 检查前端域名是否在上面的白名单中，包括协议（http/https）
+# 
+# Q2: localhost 和 127.0.0.1 有区别吗？
+# A2: 有！浏览器认为它们是不同的域，所以两个都要加
+# 
+# Q3: 生产环境用 CORS_ALLOW_ALL_ORIGINS=true 可以吗？
+# A3: ❌ 不可以！这会让任何网站都能调用你的 API，存在安全风险
+# 
+# ============================================================
 
 # 终端输出 SQL 日志
 LOGGING = {
