@@ -38,4 +38,6 @@ urlpatterns = [
     # ======== 标签 ========
     path('tags/', views.TagListView.as_view(), name='tag-list'),
     path('tags/<int:pk>', views.TagDetailView.as_view(), name="tag-detail"),
+    # 健康检查端点：返回 {status: ok} 或错误信息，供 Docker healthcheck 使用
+    path('health/', views.health, name='health'),
 ]

@@ -195,3 +195,50 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# =============================================================
+# 反向代理 & HTTPS 安全相关配置（解决 CSRF 403 问题）
+# -------------------------------------------------------------
+# 场景：Nginx 以 HTTP 与后端通信，但对外暴露 HTTPS；如果不告诉 Django
+# “真实客户端协议是 https”，Django 会认为请求是 http，从而在 CSRF 中的
+# Referer 校验阶段出现不匹配（浏览器提交的 Referer 是 https://...）。
+# 结果：登录 / 表单提交可能得到 "CSRF verification failed" (403)。
+#
+# 关键点：
+# 1. SECURE_PROXY_SSL_HEADER 指定使用哪个请求头来判断客户端协议。
+#    Nginx 已设置： proxy_set_header X-Forwarded-Proto $scheme;
+#    因此这里使用 ('HTTP_X_FORWARDED_PROTO', 'https')。
+# 2. USE_X_FORWARDED_HOST 允许 Django 使用 X-Forwarded-Host 作为请求主机，
+#    防止内部容器名影响构建绝对 URL。
+# 3. CSRF_TRUSTED_ORIGINS 需要包含 HTTPS 域名；否则 Referer 校验可能失败。
+# 4. CSRF_COOKIE_SECURE / SESSION_COOKIE_SECURE 在 HTTPS 下务必开启，避免明文传输。
+# 5. 可根据需要开启 SECURE_HSTS_SECONDS 等强化（已在 Nginx 添加 HSTS）。
+# =============================================================
+
+# 告诉 Django 在反向代理后使用 X-Forwarded-Proto 判断是否为 HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# 使用反向代理的 Host（避免生成内部主机名）
+USE_X_FORWARDED_HOST = True
+
+# 信任的 HTTPS 来源（必须包含协议前缀），用于 CSRF Referer 校验
+CSRF_TRUSTED_ORIGINS = [
+    'https://api.wangshixin.me',
+    'https://www.wangshixin.me',
+]
+
+# 在 HTTPS 下只通过安全通道发送 Cookie
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# 可选：如果需要跨站点前端访问 API 的 Cookie（此项目暂不需要）
+# CSRF_COOKIE_SAMESITE = 'None'
+# SESSION_COOKIE_SAMESITE = 'None'
+
+# 可选的额外安全强化（按需启用）：
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+# SECURE_HSTS_SECONDS = 63072000
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True

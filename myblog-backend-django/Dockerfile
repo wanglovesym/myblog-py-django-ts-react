@@ -6,11 +6,15 @@
 # slim 版本比 alpine 更兼容 Python 原生扩展（如 psycopg2）
 FROM python:3.12-slim AS base
 
+# 构建参数：可在 docker build 传入实际 Git 提交或版本号
+ARG APP_VERSION=unknown
+
 # 设置环境变量
 # PYTHONDONTWRITEBYTECODE=1：不生成 .pyc 字节码文件（减少容器体积）
 # PYTHONUNBUFFERED=1：Python 输出直接打印到终端（不缓冲），便于查看日志
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    APP_VERSION=${APP_VERSION}
 
 # 设置工作目录
 WORKDIR /app

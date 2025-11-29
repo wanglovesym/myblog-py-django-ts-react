@@ -2,6 +2,9 @@
 # render() 是 Django 用于返回 HTML 页面的快捷函数
 # 此项目是 DRF（前后端分离），视图返回的是 JSON 数据，不是 HTML，所以确实用不到 render。
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.utils import timezone
+import os
 # generics 是什么？
 #   它是 DRF 提供的一组通用视图类（Generic Views）
 #   这些类封装了常见的 API 视图逻辑（如列表、详情、创建、更新、删除）
@@ -122,3 +125,28 @@ class PostDetailView(generics.RetrieveAPIView):
 # 执行 queryset.get(slug="learn-django")
 # 找到文章后，用 PostDetailSerializer 序列化
 # 返回 JSON 响应（含 content, updated_at 等）
+
+# 健康检查视图：用于容器健康探测与运维监控
+BUILD_TIMESTAMP = timezone.now().isoformat()
+APP_VERSION = os.environ.get("APP_VERSION", "unknown")
+
+def health(request):
+    """健康检查端点:
+    返回基础运行状态 + 构建时间 + 版本标识。
+    数据库只做一次 exists() 快速探测避免高负载。
+    """
+    try:
+        db_ok = models.Post.objects.exists() or True
+        return JsonResponse({
+            "status": "ok",
+            "db": "up" if db_ok else "down",
+            "version": APP_VERSION,
+            "build_timestamp": BUILD_TIMESTAMP
+        }, status=200)
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "detail": str(e),
+            "version": APP_VERSION,
+            "build_timestamp": BUILD_TIMESTAMP
+        }, status=500)
