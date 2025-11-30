@@ -7,9 +7,7 @@
 ## 📋 目录
 
 -   [分支管理策略](#分支管理策略)
--   [开发环境选择](#开发环境选择)
--   [本地开发流程](#本地开发流程)
--   [Docker 开发流程](#docker-开发流程)
+-   [推荐开发方式](#推荐开发方式)
 -   [日常工作流程](#日常工作流程)
 -   [常见问题](#常见问题)
 
@@ -57,155 +55,127 @@ git push origin --delete dev/your-feature-name
 
 ---
 
-## 🚀 开发环境选择
+## 🚀 推荐开发方式
 
-根据不同场景选择合适的开发方式：
+本项目推荐以下两种方式进行开发与调试：
 
-| 开发方式        | 适用场景               | 优点                       | 缺点               |
-| --------------- | ---------------------- | -------------------------- | ------------------ |
-| **纯本地开发**  | 日常 UI 开发、快速调试 | 启动快（秒级）、热重载即时 | 环境与生产略有差异 |
-| **混合模式**    | 大多数开发场景         | 平衡速度与环境一致性       | 需要管理多个进程   |
-| **完整 Docker** | 环境验证、集成测试     | 与生产环境一致             | 启动慢（分钟级）   |
-
----
-
-## 💻 本地开发流程
-
-### 方式一：纯本地开发（推荐日常使用）
-
-**适用场景：** 前端美化、组件开发、快速原型
-
-**启动步骤：**
+### 方式 A ｜完整 Docker（首选，一致性最佳）
 
 ```bash
-# 终端 1：启动后端
-cd myblog-backend-django
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-python manage.py runserver
-# → http://127.0.0.1:8000
-
-# 终端 2：启动前端
-cd myblog-frontend-react
-npm run dev
-# → http://localhost:5173
-```
-
-**优点：**
-
--   ✅ 启动速度极快（秒级）
--   ✅ Vite 热重载即时响应
--   ✅ 直接使用 VS Code 调试
--   ✅ 资源占用低
-
-**缺点：**
-
--   ❌ 使用 SQLite 而非 PostgreSQL
--   ❌ 环境与生产略有差异
-
----
-
-### 方式二：混合模式（推荐大多数场景）
-
-**适用场景：** 需要 PostgreSQL、更接近生产环境
-
-**启动步骤：**
-
-```bash
-# 终端 1：启动数据库（Docker）
-docker compose -f docker-compose.dev.yml up db
-# 或后台运行：docker compose -f docker-compose.dev.yml up -d db
-
-# 终端 2：启动后端（本地，连接 Docker 数据库）
-cd myblog-backend-django
-source .venv/bin/activate
-# 确保 .env.dev.django 中配置了 PostgreSQL
-python manage.py runserver
-# → http://127.0.0.1:8000
-
-# 终端 3：启动前端（本地）
-cd myblog-frontend-react
-npm run dev
-# → http://localhost:5173
-```
-
-**优点：**
-
--   ✅ 数据库环境与生产一致（PostgreSQL）
--   ✅ 代码热重载快速
--   ✅ 灵活调试
--   ✅ 数据持久化（容器重启不丢数据）
-
-**缺点：**
-
--   ⚠️ 需要管理多个终端窗口
-
----
-
-## 🐳 Docker 开发流程
-
-### 完整 Docker 环境
-
-**适用场景：** 环境验证、集成测试、提交前最终检查
-
-**启动步骤：**
-
-```bash
-# 构建并启动所有服务
+# 在项目根目录
 docker compose -f docker-compose.dev.yml up --build
 
-# 或后台运行
+# 后台运行（可选）
 docker compose -f docker-compose.dev.yml up -d --build
+```
+
+-   ✅ 与生产环境高度一致（PostgreSQL、网络、服务协同）
+-   ✅ 已配置 volume 挂载，代码修改自动生效（热重载）
+-   ⚠️ 首次构建较慢；新增依赖需 `--build`
+
+访问地址：
+
+-   前端：http://localhost:5173
+-   后端：http://localhost:8000
+-   数据库：localhost:5432
+
+### 方式 B ｜混合模式（前端本地，后端+DB 在 Docker）
+
+```bash
+# 终端 1：后端与数据库（Docker）
+docker compose -f docker-compose.dev.yml up backend db
+
+# 终端 2：前端（本地 Vite）
+cd myblog-frontend-react
+npm install
+npm run dev
+```
+
+-   ✅ 前端开发体验最佳（Vite 热重载、调试方便）
+-   ✅ 后端/数据库仍保持与生产一致
+-   ⚠️ 需两个终端；确保前端请求的 API 指向 `http://localhost:8000`
+
+前端 API 说明：项目已在 `vite.config.ts` 配置 `server.proxy`，默认把 `/api` 代理到 `VITE_BACKEND_HOST`（未设置则为 `http://localhost:8000`）。正常情况下无需改动即可访问后端。
+
+### 方式 C ｜仅本地开发（如必须）
+
+此模式下所有服务都本地运行，适用于无法使用 Docker 的场景。
+
+```bash
+# 1）加载环境变量（解决 admin 样式与 PostgreSQL 切换问题）
+cd <项目根目录>
+set -a
+source .env.dev.django
+set +a
+
+# 2）启动后端
+cd myblog-backend-django
+source .venv/bin/activate
+python manage.py runserver  # → http://127.0.0.1:8000
+
+# 3）启动前端
+cd ../myblog-frontend-react
+npm install
+npm run dev  # → http://localhost:5173
+```
+
+重要说明：
+
+-   需要确保 `.env.dev.django` 中 `DEBUG=1`，否则开发服务器不会提供 admin 的静态文件（CSS/JS 会 404）。
+-   设置 `POSTGRES_*` 变量即可让后端连接 Docker 中的 PostgreSQL（记得先启动 `db` 容器：`docker compose -f docker-compose.dev.yml up -d db`）。
+-   如需免手动 source，可考虑使用 `direnv` 或在 `settings.py` 引入 `python-dotenv`（仅限本地开发）。
+
+---
+
+## 🐳 Docker 常用操作
+
+```bash
+# 启动（前台）
+docker compose -f docker-compose.dev.yml up --build
+
+# 启动（后台）
+docker compose -f docker-compose.dev.yml up -d --build
+
+# 查看运行状态
+docker compose -f docker-compose.dev.yml ps
 
 # 查看日志
 docker compose -f docker-compose.dev.yml logs -f backend
 docker compose -f docker-compose.dev.yml logs -f frontend
 
-# 停止服务
+# 进入容器终端
+docker compose -f docker-compose.dev.yml exec backend sh
+docker compose -f docker-compose.dev.yml exec frontend sh
+
+# 停止
 docker compose -f docker-compose.dev.yml down
 
 # 停止并删除数据卷（⚠️ 会丢失数据库数据）
 docker compose -f docker-compose.dev.yml down -v
 ```
 
-**服务访问地址：**
-
--   前端：http://localhost:5173
--   后端：http://localhost:8000
--   数据库：localhost:5432
-
-**优点：**
-
--   ✅ 与生产环境高度一致
--   ✅ 一键启动所有服务
--   ✅ 环境隔离，不污染本机
--   ✅ 代码热重载（已配置 volume 挂载，修改代码自动生效）
-
-**缺点：**
-
--   ❌ 启动慢（首次构建需数分钟）
--   ❌ 添加依赖后需要重新构建镜像（`npm install` / `pip install` 后需 `--build`）
--   ❌ 资源占用较高（多个容器同时运行）
+提示：新增依赖后需要重新构建镜像（`--build`），已配置的代码挂载支持热重载，无需为代码变更重启容器。
 
 ---
 
 ## 📝 日常工作流程
 
-### 场景 1：前端 UI 开发（推荐方式一）
+### 场景 1：前端 UI 开发（推荐：方式 B）
 
 ```bash
 # 1. 切换到开发分支
 git checkout dev/frontend
 
-# 2. 启动前端开发服务
+# 2. 启动后端与数据库（Docker）
+docker compose -f docker-compose.dev.yml up -d backend db
+
+# 3. 启动前端（本地 Vite）
 cd myblog-frontend-react
-npm run dev
+npm install
+npm run dev   # → http://localhost:5173
 
-# 3. 编辑代码（VS Code）
-# src/pages/Home.tsx
-# src/components/Header.tsx
-# ...保存后浏览器自动刷新
-
-# 4. 阶段性提交
+# 4. 开发与提交
+# 编辑 src/pages/*、src/components/*，保存即热重载
 git add src/
 git commit -m "feat(ui): improve homepage hero section"
 git push origin dev/frontend
@@ -213,31 +183,26 @@ git push origin dev/frontend
 
 ---
 
-### 场景 2：后端 API 开发（推荐方式二）
+### 场景 2：后端 API 开发（推荐：方式 A 或 B）
 
 ```bash
-# 1. 启动数据库
-docker compose -f docker-compose.dev.yml up -d db
-
-# 2. 切换到开发分支
+# 选项 1（方式 A）：完整 Docker，最接近生产
 git checkout dev/backend
+docker compose -f docker-compose.dev.yml up --build
 
-# 3. 启动后端
-cd myblog-backend-django
-source .venv/bin/activate
-python manage.py runserver
+# 选项 2（方式 B）：后端+DB 在 Docker，前端可本地或容器
+git checkout dev/backend
+docker compose -f docker-compose.dev.yml up -d backend db
 
-# 4. 修改代码并测试
-# blog/views.py
-# blog/models.py
-# 保存后 Django 自动重载
+# 修改后端代码并测试（容器内热重载已启用）
+# blog/views.py, blog/models.py 等
 
-# 5. 数据库迁移（如有 model 变更）
-python manage.py makemigrations
-python manage.py migrate
+# 如有模型变更，执行迁移（在容器内或本地虚拟环境均可）以下为在本地虚拟环境执行的代码
+docker compose -f docker-compose.dev.yml exec backend python manage.py makemigrations
+docker compose -f docker-compose.dev.yml exec backend python manage.py migrate
 
-# 6. 提交代码
-git add blog/
+# 提交代码
+git add myblog-backend-django/blog/
 git commit -m "feat(api): add comment feature"
 git push origin dev/backend
 ```
@@ -372,6 +337,27 @@ docker compose -f docker-compose.dev.yml down -v
 ---
 
 ## ❓ 常见问题
+
+### Q0: 本地运行 `python manage.py runserver`，admin 样式丢失或仍然用 SQLite？
+
+原因通常是没有加载根目录的 `.env.dev.django`：
+
+```bash
+# 在项目根目录加载环境变量（zsh）
+set -a
+source .env.dev.django
+set +a
+
+# 确保已启动 PostgreSQL 容器
+docker compose -f docker-compose.dev.yml up -d db
+
+# 再启动后端
+cd myblog-backend-django
+source .venv/bin/activate
+python manage.py runserver
+```
+
+要点：`DEBUG=1` 才会在开发服务器下正确提供 admin 静态文件；设置 `POSTGRES_*` 环境变量后会切换到容器中的 PostgreSQL。
 
 ### Q1: 数据库迁移失败怎么办？
 
