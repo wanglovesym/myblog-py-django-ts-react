@@ -1,6 +1,7 @@
 # 📝 My Personal Blog
 
-> 🇨🇳 中文版文档：请查看 `README.zh-CN.md`
+> 🇨🇳 中文版文档：请查看 [README.zh-CN.md](README.zh-CN.md)
+> 🛠 开发指南：请查看 [DEVELOPMENT.md](DEVELOPMENT.md)
 
 A modern, clean, and responsive personal blog built with **Django REST Framework** (backend) and **React + TypeScript** (frontend), featuring Markdown support, category/tag organization, and full-text search.
 
