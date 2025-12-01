@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 
 /**
  * Vite 配置文件（vite.config.ts）
@@ -22,7 +21,7 @@ export default defineConfig({
     // 插件：
     // - react(): 启用 React 支持（JSX、Fast Refresh 等）
     // - tailwindcss(): 集成 Tailwind（与 tailwind.config.js、postcss 配置协同）
-    plugins: [react(), tailwindcss()],
+    plugins: [react()],
 
     // 开发服务器配置（仅 dev 生效）：
     // 通过代理把前端发往 /api 的请求转发到后端，避免浏览器的跨域限制。
