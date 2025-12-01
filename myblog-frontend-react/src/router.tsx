@@ -8,10 +8,13 @@ import TagPostList from "./pages/TagPostList";
 
 function Layout() {
     return (
-        <>
-            <Header></Header>
-            <Outlet></Outlet>
-        </>
+        <div className="w-full min-w-screen h-full min-h-screen bg-[#1e293b] text-[#f1f5f9]">
+            <Header/>
+            {/* content 部分布局 */}
+            <main className='px-4 py-8 w-48'>
+                <Outlet />
+            </main>
+        </div>
     )
 }
 

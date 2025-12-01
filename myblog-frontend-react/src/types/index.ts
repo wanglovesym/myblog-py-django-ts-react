@@ -1,4 +1,9 @@
-// 接口定义文件
+// ================================================
+// 定义前端 TypeScript 使用的类型接口
+// 与后端 Django REST Framework 的 Serializer 对应
+// 注意：前端接口必须与后端 Serializer 严格对齐，否则类型检查会失败
+// =================================================
+
 /**
  * 定义文章作者的接口
  * username 与后端author所使用的模型User的username字段对应
@@ -12,6 +17,9 @@ export interface User {
     id?: number;
 }
 
+/**
+ * 定义从后端 API 获取的分类对象结构。
+ */
 export interface Category {
     id: number;
     name: string;

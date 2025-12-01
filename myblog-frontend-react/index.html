@@ -1,13 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>myblog-frontend-react</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <head>
+        <!-- 指定文档使用 UTF-8 编码 -->
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/jpeg" href="/avatar.jpg" />
+        <!-- iOS/桌面安装到主屏幕时的图标。 -->
+        <link rel="apple-touch-icon" href="/avatar.jpg" />
+        <!-- Vite 默认的 SVG 图标（保留做兼容）。浏览器会根据支持的类型选择合适的图标 -->
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <!-- 视口设置：移动端自适应宽度与初始缩放比例，确保响应式布局正常。 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- 页面标题：显示在浏览器标签上。 -->
+        <!-- 可与前端路由结合，根据页面动态更新（如在各页面组件里使用 document.title）。 -->
+        <title>雨影's 小站</title>
+    </head>
+    <!--
+        暗色模式说明：
+        - 本项目使用 Tailwind 的 'class' 策略；当 <html> 上有 class="dark" 时，dark: 前缀样式生效。
+        - 代码中我们通过 JS 给 document.documentElement（<html>）添加/移除 'dark' 类，因此 <body> 不需要手动写类名。
+    -->
+    <body class="">
+        <!-- React 将在这里挂载应用（参见 /src/main.tsx） -->
+        <div id="root"></div>
+        <!-- 入口脚本：使用 ESModule（type="module"）。
+                    Vite 在开发环境会按需加载模块，构建时会把依赖打包优化。 -->
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
+    <!--
+        可选：如果要做 PWA，可以在这里加入 manifest 与主题色：
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="theme-color" content="#0f172a" />
+    -->
 </html>

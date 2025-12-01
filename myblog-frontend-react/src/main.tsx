@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router';
 import './index.css';
 
 /**
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
    * 生产环境：仅开发阶段生效，不影响性能
    */
   <React.StrictMode>
-    <App />
+    {/* 直接渲染路由，无需额外的 App 组件包装 */}
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
