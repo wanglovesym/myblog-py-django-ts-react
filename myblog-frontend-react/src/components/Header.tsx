@@ -83,7 +83,7 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-50 bg-transparent backdrop-blur-0 border-b border-transparent">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-2 md:grid-cols-3 items-center h-16">
                     {/* Logo */}
                     <div className="flex items-center justify-start">
