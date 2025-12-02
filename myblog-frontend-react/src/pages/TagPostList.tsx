@@ -59,7 +59,8 @@ export default function TagPostList() {
                     <article key={post.id} className="group">
                         <Link
                             to={`/post/${post.slug}`}
-                            className="block p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-[#b5ecfd] dark:hover:border-[#b5ecfd] hover:shadow-md transition-all"
+                            className="block p-6 rounded-xl bg-white/10 dark:bg-white/5 backdrop-blur-md shadow-sm
+                                     hover:bg-white/20 dark:hover:bg-white/10 hover:shadow-md hover:ring-1 hover:ring-white/20 dark:hover:ring-white/10 transition-all"
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">

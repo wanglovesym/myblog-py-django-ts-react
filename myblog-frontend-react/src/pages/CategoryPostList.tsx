@@ -59,22 +59,35 @@ export default function CategoryPostList() {
                     <article key={post.id} className="group">
                         <Link
                             to={`/post/${post.slug}`}
-                            className="block p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-[#b5ecfd] dark:hover:border-[#b5ecfd] hover:shadow-md transition-all"
+                            className="block p-6 rounded-xl bg-white/10 dark:bg-white/5 backdrop-blur-md shadow-sm
+                                     hover:bg-white/20 dark:hover:bg-white/10 hover:shadow-md hover:ring-1 hover:ring-white/20 dark:hover:ring-white/10 transition-all"
                         >
-                            <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1">
+                            <div className="space-y-2">
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                    <time className="mr-2">发布于 {new Date(post.created_at).toLocaleDateString('zh-CN')}</time>
+                                    {post.updated_at && (
+                                        <time>· 修改于 {new Date(post.updated_at).toLocaleDateString('zh-CN')}</time>
+                                    )}
+                                </div>
+                                <div className="flex items-baseline gap-2">
+                                    {post.category && (
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{post.category.name}</span>
+                                    )}
                                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-[#b5ecfd] dark:group-hover:text-[#b5ecfd] transition">
                                         {post.title}
                                     </h2>
-                                    <p className="mt-2 text-gray-600 dark:text-gray-400 line-clamp-2">
-                                        {post.summary}
-                                    </p>
-                                    <div className="mt-4 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500">
-                                        <span>{post.author.username}</span>
-                                        <span>·</span>
-                                        <time>{new Date(post.created_at).toLocaleDateString('zh-CN')}</time>
-                                    </div>
                                 </div>
+                                <p className="text-gray-600 dark:text-gray-400 line-clamp-2">
+                                    {post.summary}
+                                </p>
+                                <div className="text-xs text-gray-500 dark:text-gray-500">作者：{post.author.username}</div>
+                                {post.tags && post.tags.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 pt-1">
+                                        {post.tags.map(tag => (
+                                            <span key={tag.id} className="text-xs px-2 py-1 rounded-full text-gray-700 dark:text-gray-300 bg-white/5 dark:bg-slate-700/30">#{tag.name}</span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </Link>
                     </article>
