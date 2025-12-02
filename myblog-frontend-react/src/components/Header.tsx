@@ -29,18 +29,25 @@ export default function Header() {
     const searchContainerRef = useRef<HTMLDivElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const navigate = useNavigate();
+    // 移动端菜单
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (!searchOpen) return;
             const target = e.target as Node;
-            if (searchContainerRef.current && !searchContainerRef.current.contains(target)) {
+            // 关闭搜索
+            if (searchOpen && searchContainerRef.current && !searchContainerRef.current.contains(target)) {
                 setSearchOpen(false);
+            }
+            // 关闭移动端菜单
+            if (mobileMenuOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(target)) {
+                setMobileMenuOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [searchOpen]);
+    }, [searchOpen, mobileMenuOpen]);
 
     // 展开后自动聚焦
     useEffect(() => {
@@ -61,7 +68,7 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-3 items-center h-16">
+                <div className="grid grid-cols-2 md:grid-cols-3 items-center h-16">
                     {/* Logo */}
                     <div className="flex items-center justify-start">
                         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
@@ -85,9 +92,9 @@ export default function Header() {
                     </div>
 
                     {/* 右侧操作（右列靠右对齐） */}
-                    <div className="flex items-center justify-end gap-4 h-9">
+                    <div className="flex items-center justify-end gap-3 h-9">
                         {/* 搜索：点击图标后向左展开 */}
-                        <div ref={searchContainerRef} className="relative h-9 flex items-center">
+                        <div ref={searchContainerRef} className="relative h-9 items-center hidden md:flex">
                             <form
                                 onSubmit={handleSubmit}
                                 className={`absolute right-0 top-0 h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? 'w-52 sm:w-64 px-2 shadow-md dark:shadow-md scale-100 border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30' : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
@@ -155,6 +162,90 @@ export default function Header() {
                                 </svg>
                             )}
                         </button>
+
+                        {/* 移动端菜单按钮（汉堡） */}
+                        <button
+                            onMouseDown={(e) => { e.stopPropagation(); setMobileMenuOpen((v) => !v); }}
+                            className="w-9 h-9 flex md:hidden items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                            aria-label="打开菜单"
+                            aria-expanded={mobileMenuOpen}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                                <path fillRule="evenodd" d="M3.75 6A.75.75 0 014.5 5.25h15a.75.75 0 110 1.5h-15A.75.75 0 013.75 6zm0 6a.75.75 0 01.75-.75h15a.75.75 0 110 1.5h-15a.75.75 0 01-.75-.75zm0 6a.75.75 0 01.75-.75h15a.75.75 0 110 1.5h-15a.75.75 0 01-.75-.75z" clipRule="evenodd" />
+                            </svg>
+                        </button>
+
+                        {/* 移动端下拉菜单 */}
+                        {mobileMenuOpen && (
+                            <div ref={mobileMenuRef} className="fixed left-0 right-0 top-16 md:hidden z-50 w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg">
+                                <div className="py-2 px-4 flex flex-col items-end text-right">
+                                    <Link
+                                        to="/"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                                    >首页</Link>
+                                    <Link
+                                        to="/blog"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                                    >博客</Link>
+                                    <Link
+                                        to="/projects"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                                    >项目</Link>
+
+                                    {/* 菜单内搜索：保留桌面动画，仅图标，点击展开输入并右对齐 */}
+                                    <div className="relative w-full px-3 py-2">
+                                        <form
+                                            onSubmit={(e) => {
+                                                e.preventDefault();
+                                                const trimmed = query.trim();
+                                                if (!trimmed) return;
+                                                navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+                                                setSearchOpen(false);
+                                                setMobileMenuOpen(false);
+                                                setQuery('');
+                                            }}
+                                            className={`ml-auto relative h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? 'w-full max-w-[12rem] px-2 shadow-md dark:shadow-md scale-100 border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30' : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
+                                        >
+                                            <input
+                                                ref={inputRef}
+                                                type="text"
+                                                value={query}
+                                                onChange={(e) => setQuery(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Escape') {
+                                                        e.preventDefault();
+                                                        setSearchOpen(false);
+                                                    }
+                                                }}
+                                                placeholder="搜索..."
+                                                className={`flex-1 min-w-0 text-sm font-bold bg-transparent placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-white focus:outline-none transition-all duration-300 ${searchOpen ? 'opacity-100 px-1' : 'opacity-0 w-0 px-0'} `}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (!searchOpen) { setSearchOpen(true); return; }
+                                                    const trimmed = query.trim();
+                                                    if (!trimmed) { setSearchOpen(false); return; }
+                                                    navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+                                                    setSearchOpen(false);
+                                                    setMobileMenuOpen(false);
+                                                    setQuery('');
+                                                }}
+                                                aria-label="搜索"
+                                                className={`shrink-0 w-9 h-9 flex items-center justify-center transition-all duration-300 ${searchOpen ? 'text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'} cursor-pointer`}
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                                                    <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.243 11.957l4.275 4.275a.75.75 0 1 0 1.06-1.06l-4.275-4.275A6.75 6.75 0 0 0 10.5 3.75Zm-5.25 6.75a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" clipRule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
