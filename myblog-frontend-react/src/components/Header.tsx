@@ -28,17 +28,23 @@ export default function Header() {
     const [query, setQuery] = useState('');
     const searchContainerRef = useRef<HTMLDivElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const dropdownSearchRef = useRef<HTMLDivElement | null>(null);
     const navigate = useNavigate();
     // 移动端菜单
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [menuMounted, setMenuMounted] = useState(false);
     const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as Node;
-            // 关闭搜索
-            if (searchOpen && searchContainerRef.current && !searchContainerRef.current.contains(target)) {
-                setSearchOpen(false);
+            // 关闭搜索（若点击不在任一搜索容器内）
+            if (searchOpen) {
+                const inDesktopSearch = !!(searchContainerRef.current && searchContainerRef.current.contains(target));
+                const inDropdownSearch = !!(dropdownSearchRef.current && dropdownSearchRef.current.contains(target));
+                if (!inDesktopSearch && !inDropdownSearch) {
+                    setSearchOpen(false);
+                }
             }
             // 关闭移动端菜单
             if (mobileMenuOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(target)) {
@@ -48,6 +54,16 @@ export default function Header() {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [searchOpen, mobileMenuOpen]);
+
+    // 控制菜单挂载与卸载以支持关闭动画
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            setMenuMounted(true);
+            return;
+        }
+        const t = window.setTimeout(() => setMenuMounted(false), 240);
+        return () => window.clearTimeout(t);
+    }, [mobileMenuOpen]);
 
     // 展开后自动聚焦
     useEffect(() => {
@@ -165,7 +181,15 @@ export default function Header() {
 
                         {/* 移动端菜单按钮（汉堡） */}
                         <button
-                            onMouseDown={(e) => { e.stopPropagation(); setMobileMenuOpen((v) => !v); }}
+                            onMouseDown={(e) => {
+                                e.stopPropagation();
+                                if (mobileMenuOpen) {
+                                    setMobileMenuOpen(false);
+                                } else {
+                                    setMenuMounted(true);
+                                    setMobileMenuOpen(true);
+                                }
+                            }}
                             className="w-9 h-9 flex md:hidden items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
                             aria-label="打开菜单"
                             aria-expanded={mobileMenuOpen}
@@ -176,8 +200,8 @@ export default function Header() {
                         </button>
 
                         {/* 移动端下拉菜单 */}
-                        {mobileMenuOpen && (
-                            <div ref={mobileMenuRef} className="fixed left-0 right-0 top-16 md:hidden z-50 w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg">
+                        {menuMounted && (
+                            <div ref={mobileMenuRef} className={`fixed left-0 right-0 top-16 md:hidden z-50 w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg origin-top overflow-hidden ${mobileMenuOpen ? 'animate-dropdown' : 'animate-dropdown-out'}`}>
                                 <div className="py-2 px-4 flex flex-col items-end text-right">
                                     <Link
                                         to="/"
@@ -196,7 +220,7 @@ export default function Header() {
                                     >项目</Link>
 
                                     {/* 菜单内搜索：保留桌面动画，仅图标，点击展开输入并右对齐 */}
-                                    <div className="relative w-full px-3 py-2">
+                                    <div ref={dropdownSearchRef} className="relative w-full px-3 py-2">
                                         <form
                                             onSubmit={(e) => {
                                                 e.preventDefault();

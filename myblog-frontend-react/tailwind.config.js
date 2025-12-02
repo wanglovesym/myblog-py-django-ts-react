@@ -21,16 +21,39 @@ module.exports = {
     darkMode: "class",
     theme: {
         // 在这里扩展主题（颜色、字体、间距、阴影等等）
-        // 例如：
-        // extend: {
-        //   colors: {
-        //     brand: {
-        //       DEFAULT: '#4f46e5',
-        //       dark: '#4338ca'
-        //     }
-        //   }
-        // }
-        extend: {}
+        extend: {
+            keyframes: {
+                dropdown: {
+                    "0%": {
+                        opacity: "0",
+                        transform: "scaleY(0.98)",
+                        clipPath: "inset(0 0 100% 0)"
+                    },
+                    "100%": {
+                        opacity: "1",
+                        transform: "scaleY(1)",
+                        clipPath: "inset(0 0 0 0)"
+                    }
+                },
+                dropdownOut: {
+                    "0%": {
+                        opacity: "1",
+                        transform: "scaleY(1)",
+                        clipPath: "inset(0 0 0 0)"
+                    },
+                    "100%": {
+                        opacity: "0",
+                        transform: "scaleY(0.98)",
+                        clipPath: "inset(0 0 100% 0)"
+                    }
+                }
+            },
+            animation: {
+                dropdown: "dropdown 0.22s cubic-bezier(0.22,1,0.36,1) both",
+                "dropdown-out":
+                    "dropdownOut 0.18s cubic-bezier(0.4,0,0.2,1) both"
+            }
+        }
     },
     // 插件：这里启用了官方的 typography（排版）插件
     // 作用：提供 prose 类名，让长文（Markdown/文章详情）更易读

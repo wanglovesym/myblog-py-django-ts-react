@@ -1,3 +1,5 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 动画已移入 Tailwind 配置（tailwind.config.js -> theme.extend.keyframes/animation） */
