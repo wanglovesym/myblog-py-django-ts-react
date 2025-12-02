@@ -3,3 +3,44 @@
 @tailwind utilities;
 
 /* 动画已移入 Tailwind 配置（tailwind.config.js -> theme.extend.keyframes/animation） */
+
+/* 顶部光晕 Overlay：仅在暗色模式显示，限制高度为初始视口高度，随内容滚动保持固定，不在后续屏出现 */
+.glow-overlay {
+    position: absolute;
+    inset: 0;
+    height: var(--dvh-static);
+    pointer-events: none;
+    background: radial-gradient(
+            80vw clamp(320px, calc(var(--dvh-static) * 0.4), 560px) at 50% 0%,
+            rgba(181, 236, 253, 0.16) 0%,
+            rgba(181, 236, 253, 0.08) 42%,
+            rgba(181, 236, 253, 0) 78%
+        ),
+        radial-gradient(
+            60vw clamp(260px, calc(var(--dvh-static) * 0.3), 460px) at 8% 6%,
+            rgba(181, 236, 253, 0.1) 0%,
+            rgba(181, 236, 253, 0.05) 40%,
+            rgba(181, 236, 253, 0) 75%
+        ),
+        radial-gradient(
+            60vw clamp(260px, calc(var(--dvh-static) * 0.3), 460px) at 92% 6%,
+            rgba(181, 236, 253, 0.1) 0%,
+            rgba(181, 236, 253, 0.05) 40%,
+            rgba(181, 236, 253, 0) 75%
+        );
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.85) 35%,
+        rgba(0, 0, 0, 0.5) 60%,
+        rgba(0, 0, 0, 0) 85%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.85) 35%,
+        rgba(0, 0, 0, 0.5) 60%,
+        rgba(0, 0, 0, 0) 85%
+    );
+    z-index: 0;
+}

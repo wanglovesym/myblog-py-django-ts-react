@@ -27,16 +27,9 @@ module.exports = {
                 // 从 #212e39 过渡到 #0b0a0f
                 // 顶部微弱光晕（径向）叠加在主线性渐变之上
                 // 可调整尺寸与透明度以获得更柔和或更强的效果
-                "site-dark": [
-                    // 顶部居中的径向光晕：使用 --dvh-static 并加入 clamp 以限制极端尺寸
-                    "radial-gradient(80vw clamp(320px, calc(var(--dvh-static) * 0.4), 560px) at 50% 0%, rgba(181,236,253,0.16) 0%, rgba(181,236,253,0.08) 42%, rgba(181,236,253,0.00) 78%)",
-                    // 左侧微弱光晕：使用 --dvh-static + clamp
-                    "radial-gradient(60vw clamp(260px, calc(var(--dvh-static) * 0.3), 460px) at 8% 6%, rgba(181,236,253,0.10) 0%, rgba(181,236,253,0.05) 40%, rgba(181,236,253,0.00) 75%)",
-                    // 右侧微弱光晕：与左侧对称，使用 --dvh-static + clamp
-                    "radial-gradient(60vw clamp(260px, calc(var(--dvh-static) * 0.3), 460px) at 92% 6%, rgba(181,236,253,0.10) 0%, rgba(181,236,253,0.05) 40%, rgba(181,236,253,0.00) 75%)",
-                    // 主体暗色竖向渐变：使用 --dvh（动态）以跟随屏幕高度变化完成过渡
+                // 仅保留线性渐变，光晕改为独立 overlay 控制，避免滚动时第二/第三屏出现光斑
+                "site-dark":
                     "linear-gradient(to bottom, #212e39 0px, #0b0a0f var(--dvh))"
-                ].join(", ")
             },
             typography: (theme) => ({
                 DEFAULT: {
