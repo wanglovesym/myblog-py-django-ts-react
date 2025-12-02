@@ -64,7 +64,7 @@ export default function Home() {
                     </h1>
 
                     {/* 座右铭 - 打字机效果 */}
-                    <h2 className="text-lg sm:text-xl font-medium text-gray-700 dark:text-gray-300 tracking-wider mb-6 min-h-[2rem]">
+                    <h2 className="text-base sm:text-lg font-normal text-gray-700 dark:text-gray-300 tracking-wider mb-4 min-h-[1.5rem] sm:min-h-[1.75rem]">
                         {typedText}
                         {showCursor && <span className="animate-pulse">|</span>}
                     </h2>
