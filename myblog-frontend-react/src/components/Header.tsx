@@ -35,6 +35,45 @@ export default function Header() {
     const [menuMounted, setMenuMounted] = useState(false);
     const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
+    // 滚动行为：收缩与自动隐藏
+    const headerRef = useRef<HTMLElement | null>(null);
+    const [scrollY, setScrollY] = useState(0);
+    const lastYRef = useRef(0);
+    const [headerHeight, setHeaderHeight] = useState<number>(64); // 默认 h-16 = 64px
+    const condensed = scrollY > 24; // 超过 24px 开始收缩
+    const [hidden, setHidden] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => {
+            const y = window.scrollY || window.pageYOffset;
+            const last = lastYRef.current;
+            setScrollY(y);
+            const goingDown = y > last;
+            // 在滚动超过一定距离且继续向下时隐藏
+            if (y > 320 && goingDown) {
+                setHidden(true);
+            } else {
+                // 向上滚动或未达到阈值时显示
+                setHidden(false);
+            }
+            lastYRef.current = y;
+        };
+        const onResize = () => {
+            if (headerRef.current) {
+                setHeaderHeight(headerRef.current.getBoundingClientRect().height);
+            }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onResize);
+        // 初始测量
+        onResize();
+        onScroll();
+        return () => {
+            window.removeEventListener('scroll', onScroll as any);
+            window.removeEventListener('resize', onResize);
+        };
+    }, []);
+
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as Node;
@@ -82,9 +121,17 @@ export default function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-transparent backdrop-blur-0 border-b border-transparent">
-            <div className="max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-2 md:grid-cols-3 items-center h-16">
+        <header
+            ref={headerRef}
+            className={`sticky top-0 z-50 transition-all duration-300 ${hidden ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}
+        >
+            <div
+                className={`mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${condensed
+                        ? 'max-w-4xl mt-2 rounded-2xl bg-black/60 dark:bg-black/60 border border-white/10 shadow-lg backdrop-blur'
+                        : 'max-w-[1040px] bg-transparent border-transparent'
+                    }`}
+            >
+                <div className={`grid grid-cols-2 md:grid-cols-3 items-center transition-all duration-300 ${condensed ? 'h-12' : 'h-16'}`}>
                     {/* Logo */}
                     <div className="flex items-center justify-start">
                         <Link to="/" className="flex items-center gap-2 transition-colors">
@@ -201,7 +248,11 @@ export default function Header() {
 
                         {/* 移动端下拉菜单 */}
                         {menuMounted && (
-                            <div ref={mobileMenuRef} className={`fixed left-0 right-0 top-16 md:hidden z-50 w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg origin-top overflow-hidden ${mobileMenuOpen ? 'animate-dropdown' : 'animate-dropdown-out'}`}>
+                            <div
+                                ref={mobileMenuRef}
+                                className={`fixed left-0 right-0 md:hidden z-50 w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg origin-top overflow-hidden ${mobileMenuOpen ? 'animate-dropdown' : 'animate-dropdown-out'}`}
+                                style={{ top: headerHeight }}
+                            >
                                 <div className="py-2 px-4 flex flex-col items-end text-right">
                                     <Link
                                         to="/"
