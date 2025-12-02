@@ -82,7 +82,7 @@ export default function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+        <header className="sticky top-0 z-50 bg-transparent backdrop-blur-0 border-b border-transparent">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-2 md:grid-cols-3 items-center h-16">
                     {/* Logo */}
