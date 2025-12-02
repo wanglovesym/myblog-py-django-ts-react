@@ -4,6 +4,26 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import './index.css';
 
+// 视口高度变量：--dvh 动态更新，--dvh-static 仅初始化一次
+(() => {
+  const setDynamic = () => {
+    const dvh = window.innerHeight;
+    document.documentElement.style.setProperty('--dvh', `${dvh}px`);
+  };
+  if (!document.documentElement.style.getPropertyValue('--dvh-static')) {
+    const initial = window.innerHeight;
+    document.documentElement.style.setProperty('--dvh-static', `${initial}px`);
+  }
+  setDynamic();
+  window.addEventListener('resize', setDynamic);
+  window.addEventListener('orientationchange', () => {
+    // 方向变化时：同时刷新动态高度与静态高度（重置首屏参考值）
+    const current = window.innerHeight;
+    document.documentElement.style.setProperty('--dvh-static', `${current}px`);
+    setDynamic();
+  });
+})();
+
 /**
  * 创建根节点并渲染
  * root：匹配index.html中的<div id="root"></div>

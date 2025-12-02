@@ -10,7 +10,7 @@ import TagPostList from "./pages/TagPostList";
 
 function Layout() {
     return (
-        <div className="min-h-screen bg-white dark:bg-site-dark text-gray-900 dark:text-gray-100 transition-colors">
+        <div className="bg-white dark:bg-site-dark bg-no-repeat bg-top text-gray-900 dark:text-gray-100 transition-colors" style={{ minHeight: 'var(--dvh)' }}>
             <Header />
             {/* 主内容区域 */}
             <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -28,14 +28,14 @@ module.exports = {
                 // 顶部微弱光晕（径向）叠加在主线性渐变之上
                 // 可调整尺寸与透明度以获得更柔和或更强的效果
                 "site-dark": [
-                    // 顶部居中的径向光晕：宽1200px、高420px，从浅蓝光到透明
-                    "radial-gradient(1200px 420px at 50% 0%, rgba(181,236,253,0.16) 0%, rgba(181,236,253,0.08) 42%, rgba(181,236,253,0.00) 78%)",
-                    // 左侧微弱光晕：靠左 8%，更低透明度与更窄高度
-                    "radial-gradient(900px 360px at 8% 6%, rgba(181,236,253,0.10) 0%, rgba(181,236,253,0.05) 40%, rgba(181,236,253,0.00) 75%)",
-                    // 右侧微弱光晕：靠右 92%，强度与左侧一致
-                    "radial-gradient(900px 360px at 92% 6%, rgba(181,236,253,0.10) 0%, rgba(181,236,253,0.05) 40%, rgba(181,236,253,0.00) 75%)",
-                    // 主体暗色竖向渐变
-                    "linear-gradient(to bottom, #212e39, #0b0a0f)"
+                    // 顶部居中的径向光晕：使用 --dvh-static 并加入 clamp 以限制极端尺寸
+                    "radial-gradient(80vw clamp(320px, calc(var(--dvh-static) * 0.4), 560px) at 50% 0%, rgba(181,236,253,0.16) 0%, rgba(181,236,253,0.08) 42%, rgba(181,236,253,0.00) 78%)",
+                    // 左侧微弱光晕：使用 --dvh-static + clamp
+                    "radial-gradient(60vw clamp(260px, calc(var(--dvh-static) * 0.3), 460px) at 8% 6%, rgba(181,236,253,0.10) 0%, rgba(181,236,253,0.05) 40%, rgba(181,236,253,0.00) 75%)",
+                    // 右侧微弱光晕：与左侧对称，使用 --dvh-static + clamp
+                    "radial-gradient(60vw clamp(260px, calc(var(--dvh-static) * 0.3), 460px) at 92% 6%, rgba(181,236,253,0.10) 0%, rgba(181,236,253,0.05) 40%, rgba(181,236,253,0.00) 75%)",
+                    // 主体暗色竖向渐变：使用 --dvh（动态）以跟随屏幕高度变化完成过渡
+                    "linear-gradient(to bottom, #212e39 0px, #0b0a0f var(--dvh))"
                 ].join(", ")
             },
             typography: (theme) => ({
