@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 // 用于获取 URL 中的 ?q=xxx 参数
 // 返回值：一个类似 [URLSearchParams, setSearchParams] 的数组
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import type { Post } from '../types'
 // 引入 API 配置：统一管理后端地址
@@ -57,35 +57,53 @@ export default function SearchResult() {
         fetchSearchResults();
     }, [query]); // query是依赖数组，作用在query改变时，重新执行搜索逻辑
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-gray-600 dark:text-gray-400">搜索中...</div>
+            </div>
+        );
+    }
+
     return (
-        <div>
-            <h2 className="text-xl font-semibold mb-4">
-                搜索 “{query}” 的结果
-            </h2>
-            {loading ? ( // 状态loading显示搜索中
-                <p>搜索中...</p>
-            ) : posts.length > 0 ? ( // 如果找到至少一篇文章
-                <div className="space-y-4">
-                    {posts.map((post) => (
-                        <article key={post.id} className="border-b pb-4">
-                            <h3 className="text-lg font-medium">
-                                <a
-                                    href={`/post/${post.slug}`} //生成详情页链接
-                                    className="text-gray-900 dark:text-white hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] transition-colors"
-                                >
-                                    {post.title}
-                                </a>
-                            </h3>
-                            <p className="text-gray-600 mt-1">{post.summary}</p>
-                            <div className="text-sm text-gray-500 mt-2">
-                                作者：{post.author.username} · 发布于{' '}
-                                {new Date(post.created_at).toLocaleDateString()}
+        <div className="space-y-8">
+            <div>
+                <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">搜索结果</h1>
+                <p className="text-gray-600 dark:text-gray-400">关键字：“{query}”{posts.length ? ` · 共 ${posts.length} 篇` : ''}</p>
+            </div>
+
+            <div className="space-y-6">
+                {posts.map(post => (
+                    <article key={post.id} className="group">
+                        <Link
+                            to={`/post/${post.slug}`}
+                            className="block p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700
+                                     hover:border-[#b5ecfd] dark:hover:border-[#b5ecfd] hover:shadow-md transition-all"
+                        >
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="flex-1">
+                                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-[#b5ecfd] dark:group-hover:text-[#b5ecfd] transition">
+                                        {post.title}
+                                    </h2>
+                                    <p className="mt-2 text-gray-600 dark:text-gray-400 line-clamp-2">
+                                        {post.summary}
+                                    </p>
+                                    <div className="mt-4 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500">
+                                        <span>{post.author.username}</span>
+                                        <span>·</span>
+                                        <time>{new Date(post.created_at).toLocaleDateString('zh-CN')}</time>
+                                    </div>
+                                </div>
                             </div>
-                        </article>
-                    ))}
+                        </Link>
+                    </article>
+                ))}
+            </div>
+
+            {posts.length === 0 && (
+                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                    没有找到相关文章。
                 </div>
-            ) : ( // 否则显示无结果
-                <p>没有找到相关文章。</p>
             )}
         </div>
     );
