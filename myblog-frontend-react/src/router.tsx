@@ -1,5 +1,7 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import Home from "./pages/Home";
+import Blog from "./pages/Blog";
+import Projects from "./pages/Projects";
 import Post from "./pages/Post";
 import SearchResult from "./pages/SearchResult";
 import Header from './components/Header';
@@ -8,12 +10,20 @@ import TagPostList from "./pages/TagPostList";
 
 function Layout() {
     return (
-        <div className="w-full min-w-screen h-full min-h-screen bg-[#1e293b] text-[#f1f5f9]">
-            <Header/>
-            {/* content 部分布局 */}
-            <main className='px-4 py-8 w-48'>
+        <div className="min-h-screen bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100 transition-colors">
+            <Header />
+            {/* 主内容区域 */}
+            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <Outlet />
             </main>
+            {/* 页脚 */}
+            <footer className="border-t border-gray-200 dark:border-gray-800 mt-20">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+                        © {new Date().getFullYear()} 雨影的小站 · Powered by React & Django
+                    </p>
+                </div>
+            </footer>
         </div>
     )
 }
@@ -26,6 +36,14 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <Home />
+            },
+            {
+                path: "/blog",
+                element: <Blog />
+            },
+            {
+                path: "/projects",
+                element: <Projects />
             },
             {
                 path: "/post/:slug",
@@ -43,11 +61,6 @@ export const router = createBrowserRouter([
                 path: "/tag/:id",
                 element: <TagPostList />
             }
-            // 重定向未知路由到首页（可选）
-            // {
-            //     path: "*",
-            //     element: <Navigate to="/" replace />
-            // },
         ]
     }
 ])
