@@ -36,7 +36,7 @@ module.exports = {
                     "radial-gradient(900px 360px at 92% 6%, rgba(181,236,253,0.10) 0%, rgba(181,236,253,0.05) 40%, rgba(181,236,253,0.00) 75%)",
                     // 主体暗色竖向渐变
                     "linear-gradient(to bottom, #212e39, #0b0a0f)"
-                ].join(', ')
+                ].join(", ")
             },
             keyframes: {
                 dropdown: {

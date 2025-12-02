@@ -87,21 +87,21 @@ export default function Header() {
                 <div className="grid grid-cols-2 md:grid-cols-3 items-center h-16">
                     {/* Logo */}
                     <div className="flex items-center justify-start">
-                        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                            <span className="text-xl font-bold text-gray-900 dark:text-white">雨影的小站</span>
+                        <Link to="/" className="flex items-center gap-2 transition-colors">
+                            <span className="text-xl font-bold text-gray-900 dark:text-white hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] transition-colors">雨影的小站</span>
                         </Link>
                     </div>
 
                     {/* 导航链接 - 桌面端（居中列） */}
                     <div className="hidden md:flex items-center justify-center">
                         <nav className="flex items-center gap-6 h-9">
-                            <Link to="/" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                            <Link to="/" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] transition font-medium">
                                 首页
                             </Link>
-                            <Link to="/blog" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                            <Link to="/blog" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] transition font-medium">
                                 博客
                             </Link>
-                            <Link to="/projects" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                            <Link to="/projects" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] transition font-medium">
                                 项目
                             </Link>
                         </nav>
@@ -153,7 +153,7 @@ export default function Header() {
                                         setQuery('');
                                     }}
                                     aria-label="搜索"
-                                    className={`shrink-0 w-9 h-9 flex items-center justify-center transition-all duration-300 ${searchOpen ? 'text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'} cursor-pointer`}
+                                    className={`shrink-0 w-9 h-9 flex items-center justify-center transition-all duration-300 ${searchOpen ? 'text-gray-400 dark:text-gray-500 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd]' : 'text-gray-600 dark:text-gray-400 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd]'} cursor-pointer`}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
                                         <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.243 11.957l4.275 4.275a.75.75 0 1 0 1.06-1.06l-4.275-4.275A6.75 6.75 0 0 0 10.5 3.75Zm-5.25 6.75a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" clipRule="evenodd" />
@@ -165,7 +165,7 @@ export default function Header() {
                         {/* 暗色模式切换 */}
                         <button
                             onClick={toggleTheme}
-                            className="w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                            className="w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] transition"
                             aria-label={isDark ? "切换到明亮模式" : "切换到暗色模式"}
                         >
                             {isDark ? (
@@ -190,7 +190,7 @@ export default function Header() {
                                     setMobileMenuOpen(true);
                                 }
                             }}
-                            className="w-9 h-9 flex md:hidden items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                            className="w-9 h-9 flex md:hidden items-center justify-center text-gray-600 dark:text-gray-400 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] transition"
                             aria-label="打开菜单"
                             aria-expanded={mobileMenuOpen}
                         >
@@ -206,17 +206,17 @@ export default function Header() {
                                     <Link
                                         to="/"
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd]"
                                     >首页</Link>
                                     <Link
                                         to="/blog"
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd]"
                                     >博客</Link>
                                     <Link
                                         to="/projects"
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                                        className="inline-flex justify-end w-full px-3 py-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd]"
                                     >项目</Link>
 
                                     {/* 菜单内搜索：保留桌面动画，仅图标，点击展开输入并右对齐 */}
@@ -259,7 +259,7 @@ export default function Header() {
                                                     setQuery('');
                                                 }}
                                                 aria-label="搜索"
-                                                className={`shrink-0 w-9 h-9 flex items-center justify-center transition-all duration-300 ${searchOpen ? 'text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'} cursor-pointer`}
+                                                className={`shrink-0 w-9 h-9 flex items-center justify-center transition-all duration-300 ${searchOpen ? 'text-gray-400 dark:text-gray-500 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd]' : 'text-gray-600 dark:text-gray-400 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd]'} cursor-pointer`}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
                                                     <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.243 11.957l4.275 4.275a.75.75 0 1 0 1.06-1.06l-4.275-4.275A6.75 6.75 0 0 0 10.5 3.75Zm-5.25 6.75a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" clipRule="evenodd" />
