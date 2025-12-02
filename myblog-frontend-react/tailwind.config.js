@@ -38,6 +38,29 @@ module.exports = {
                     "linear-gradient(to bottom, #212e39, #0b0a0f)"
                 ].join(", ")
             },
+            typography: (theme) => ({
+                DEFAULT: {
+                    css: {
+                        a: {
+                            textDecoration: "underline",
+                            transition: "color .15s ease",
+                            "&:hover": {
+                                color: "#b5ecfd"
+                            }
+                        }
+                    }
+                },
+                invert: {
+                    css: {
+                        a: {
+                            transition: "color .15s ease",
+                            "&:hover": {
+                                color: "#b5ecfd"
+                            }
+                        }
+                    }
+                }
+            }),
             keyframes: {
                 dropdown: {
                     "0%": {

@@ -74,7 +74,7 @@ export default function Post() {
                 ))}
             </div>
             <div
-                className="prose max-w-none"
+                className="prose dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: htmlContent }} // 使用预渲染的 HTML
             />
         </article>

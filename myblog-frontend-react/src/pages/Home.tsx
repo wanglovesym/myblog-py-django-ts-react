@@ -140,7 +140,7 @@ export default function Home() {
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">最新文章</h2>
                     <Link
                         to="/blog"
-                        className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                        className="text-gray-600 dark:text-gray-400 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] hover:underline text-sm font-medium transition-colors"
                     >
                         查看全部 →
                     </Link>
@@ -163,7 +163,7 @@ export default function Home() {
                                         <div className="flex items-baseline gap-3 text-sm text-gray-500 dark:text-gray-500 mb-1">
                                             <time>{new Date(post.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' })}</time>
                                         </div>
-                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
+                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-[#b5ecfd] dark:group-hover:text-[#b5ecfd] transition">
                                             {post.title}
                                         </h3>
                                         {post.summary && (
@@ -185,7 +185,7 @@ export default function Home() {
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">项目</h2>
                     <Link
                         to="/projects"
-                        className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                        className="text-gray-600 dark:text-gray-400 hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] hover:underline text-sm font-medium transition-colors"
                     >
                         查看全部 →
                     </Link>

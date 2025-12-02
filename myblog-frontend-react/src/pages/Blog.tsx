@@ -44,11 +44,11 @@ export default function Blog() {
                         <Link
                             to={`/post/${post.slug}`}
                             className="block p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-gray-700
-                                     hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all"
+                                     hover:border-[#b5ecfd] dark:hover:border-[#b5ecfd] hover:shadow-md transition-all"
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1">
-                                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
+                                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-[#b5ecfd] dark:group-hover:text-[#b5ecfd] transition">
                                         {post.title}
                                     </h2>
                                     <p className="mt-2 text-gray-600 dark:text-gray-400 line-clamp-2">

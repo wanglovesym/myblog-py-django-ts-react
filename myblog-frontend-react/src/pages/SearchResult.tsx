@@ -71,7 +71,7 @@ export default function SearchResult() {
                             <h3 className="text-lg font-medium">
                                 <a
                                     href={`/post/${post.slug}`} //生成详情页链接
-                                    className="text-blue-600 hover:underline"
+                                    className="text-gray-900 dark:text-white hover:text-[#b5ecfd] dark:hover:text-[#b5ecfd] transition-colors"
                                 >
                                     {post.title}
                                 </a>

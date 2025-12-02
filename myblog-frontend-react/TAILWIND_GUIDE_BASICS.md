@@ -118,6 +118,7 @@ Tailwind 内置标准化的设计令牌（Design Tokens）：
 | `justify-evenly` | `justify-content: space-evenly` | 均匀分布 |
 
 **交叉轴对齐**（align-items）：
+
 | 类名 | CSS | 说明 |
 |------|-----|------|
 | `items-start` | `align-items: flex-start` | 起点对齐 |
