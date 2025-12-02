@@ -8,6 +8,9 @@ import { SOCIAL } from '../config/social';
 export default function Home() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [typedText, setTypedText] = useState<string>('');
+    const [showCursor, setShowCursor] = useState<boolean>(true);
+    const motto = 'BE PATIENT WITH YOUR GROWTH';
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -23,6 +26,22 @@ export default function Home() {
         };
 
         fetchPosts();
+    }, []);
+
+    // 打字机效果
+    useEffect(() => {
+        let currentIndex = 0;
+        const typingInterval = setInterval(() => {
+            if (currentIndex <= motto.length) {
+                setTypedText(motto.slice(0, currentIndex));
+                currentIndex++;
+            } else {
+                clearInterval(typingInterval);
+                setShowCursor(false); // 打字完成后隐藏光标
+            }
+        }, 100); // 每100ms打印一个字符
+
+        return () => clearInterval(typingInterval);
     }, []);
 
     return (
@@ -44,9 +63,10 @@ export default function Home() {
                         雨影
                     </h1>
 
-                    {/* 座右铭 */}
-                    <h2 className="text-lg sm:text-xl font-medium text-gray-700 dark:text-gray-300 tracking-wider mb-6">
-                        BE PATIENT WITH YOUR GROWTH
+                    {/* 座右铭 - 打字机效果 */}
+                    <h2 className="text-lg sm:text-xl font-medium text-gray-700 dark:text-gray-300 tracking-wider mb-6 min-h-[2rem]">
+                        {typedText}
+                        {showCursor && <span className="animate-pulse">|</span>}
                     </h2>
 
                     {/* 社交图标 */}

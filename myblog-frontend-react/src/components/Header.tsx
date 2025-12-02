@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { SOCIAL } from "../config/social";
 
 export default function Header() {
-    const [query, setQuery] = useState('');
     const [isDark, setIsDark] = useState<boolean>(() => {
         if (typeof window === 'undefined') return true;
         const saved = localStorage.getItem('theme');
@@ -11,17 +9,6 @@ export default function Header() {
         if (saved === 'light') return false;
         return true;
     });
-    const [searchOpen, setSearchOpen] = useState(false);
-    const navigate = useNavigate();
-
-    const handleSearch = (event: React.FormEvent) => {
-        event.preventDefault();
-        if (query.trim()) {
-            navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-            setSearchOpen(false);
-            setQuery('');
-        }
-    };
 
     useEffect(() => {
         const root = document.documentElement;
@@ -36,83 +23,126 @@ export default function Header() {
 
     const toggleTheme = () => setIsDark((v) => !v);
 
+    // 简单搜索框展开逻辑
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [query, setQuery] = useState('');
+    const searchContainerRef = useRef<HTMLDivElement | null>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (!searchOpen) return;
+            const target = e.target as Node;
+            if (searchContainerRef.current && !searchContainerRef.current.contains(target)) {
+                setSearchOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [searchOpen]);
+
+    // 展开后自动聚焦
+    useEffect(() => {
+        if (searchOpen) {
+            requestAnimationFrame(() => inputRef.current?.focus());
+        }
+    }, [searchOpen]);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const trimmed = query.trim();
+        if (!trimmed) return;
+        navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+        setSearchOpen(false);
+        setQuery('');
+    };
+
     return (
         <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+                <div className="grid grid-cols-3 items-center h-16">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
-                        <span className="text-xl font-bold text-gray-900 dark:text-white">雨影的小站</span>
-                    </Link>
-
-                    {/* 导航链接 - 桌面端 */}
-                    <nav className="hidden md:flex items-center gap-6">
-                        <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
-                            首页
+                    <div className="flex items-center justify-start">
+                        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
+                            <span className="text-xl font-bold text-gray-900 dark:text-white">雨影的小站</span>
                         </Link>
-                        <Link to="/blog" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
-                            博客
-                        </Link>
-                        <Link to="/projects" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
-                            项目
-                        </Link>
-                    </nav>
+                    </div>
 
-                    {/* 右侧操作 */}
-                    <div className="flex items-center gap-3">
-                        {/* 社交图标 */}
-                        <div className="hidden sm:flex items-center gap-2">
-                            <a href={SOCIAL.github} target="_blank" rel="noopener" aria-label="GitHub" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                                    <path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.11.82-.26.82-.58v-2.02c-3.35.73-4.06-1.62-4.06-1.62-.55-1.4-1.35-1.77-1.35-1.77-1.1-.75.08-.73.08-.73 1.22.09 1.86 1.25 1.86 1.25 1.08 1.85 2.84 1.32 3.53 1.01.11-.79.42-1.32.76-1.62-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.4 1.24-3.24-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.31 1.23a11.5 11.5 0 0 1 6.02 0c2.3-1.55 3.31-1.23 3.31-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.92 1.24 3.24 0 4.64-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.21v3.28c0 .32.22.7.82.58A12 12 0 0 0 12 .5z" />
-                                </svg>
-                            </a>
-                            <a href={SOCIAL.email} aria-label="Email" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                                    <path d="M2 6.75A2.75 2.75 0 0 1 4.75 4h14.5A2.75 2.75 0 0 1 22 6.75v10.5A2.75 2.75 0 0 1 19.25 20H4.75A2.75 2.75 0 0 1 2 17.25V6.75Zm3.1.25a.75.75 0 0 0-.5 1.32l7.4 5.55c.57.43 1.42.43 1.99 0l7.4-5.55a.75.75 0 0 0-.5-1.32H5.1Z" />
-                                </svg>
-                            </a>
-                        </div>
+                    {/* 导航链接 - 桌面端（居中列） */}
+                    <div className="hidden md:flex items-center justify-center">
+                        <nav className="flex items-center gap-6 h-9">
+                            <Link to="/" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                                首页
+                            </Link>
+                            <Link to="/blog" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                                博客
+                            </Link>
+                            <Link to="/projects" className="flex items-center h-9 leading-none text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">
+                                项目
+                            </Link>
+                        </nav>
+                    </div>
 
-                        {/* 搜索 */}
-                        {searchOpen ? (
-                            <form onSubmit={handleSearch} className="flex items-center gap-2">
+                    {/* 右侧操作（右列靠右对齐） */}
+                    <div className="flex items-center justify-end gap-4 h-9">
+                        {/* 搜索：点击图标后向左展开 */}
+                        <div ref={searchContainerRef} className="relative h-9 flex items-center">
+                            <form
+                                onSubmit={handleSubmit}
+                                className={`absolute right-0 top-0 h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? 'w-52 sm:w-64 px-2 shadow-md dark:shadow-md scale-100 border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30' : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
+                            >
                                 <input
+                                    ref={inputRef}
                                     type="text"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Escape') {
+                                            e.preventDefault();
+                                            setSearchOpen(false);
+                                        }
+                                        if (e.key === 'Enter') {
+                                            // form submit will handle
+                                        }
+                                    }}
                                     placeholder="搜索..."
-                                    className="w-32 sm:w-48 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md
-                                             bg-white dark:bg-slate-800 text-gray-900 dark:text-white
-                                             focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                                    autoFocus
-                                    onBlur={() => { if (!query) setSearchOpen(false); }}
+                                    className={`flex-1 min-w-0 text-sm bg-transparent placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-white focus:outline-none transition-all duration-300 ${searchOpen ? 'opacity-100 px-1' : 'opacity-0 w-0 px-0'} `}
                                 />
+                                {/* 放大镜按钮：不再自动提交，只负责展开/聚焦/关闭 */}
                                 <button
-                                    type="submit"
-                                    className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                                    type="button"
+                                    onClick={() => {
+                                        if (!searchOpen) {
+                                            // 初次点击：展开
+                                            setSearchOpen(true);
+                                            return;
+                                        }
+                                        const trimmed = query.trim();
+                                        if (!trimmed) {
+                                            // 已展开且为空：关闭
+                                            setSearchOpen(false);
+                                            return;
+                                        }
+                                        // 已展开且有内容：执行搜索跳转并清空
+                                        navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+                                        setSearchOpen(false);
+                                        setQuery('');
+                                    }}
+                                    aria-label="搜索"
+                                    className={`shrink-0 w-9 h-9 flex items-center justify-center transition-all duration-300 ${searchOpen ? 'text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'} cursor-pointer`}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
                                         <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.243 11.957l4.275 4.275a.75.75 0 1 0 1.06-1.06l-4.275-4.275A6.75 6.75 0 0 0 10.5 3.75Zm-5.25 6.75a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" clipRule="evenodd" />
                                     </svg>
                                 </button>
                             </form>
-                        ) : (
-                            <button
-                                onClick={() => setSearchOpen(true)}
-                                className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                                aria-label="搜索"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                                    <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.243 11.957l4.275 4.275a.75.75 0 1 0 1.06-1.06l-4.275-4.275A6.75 6.75 0 0 0 10.5 3.75Zm-5.25 6.75a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        )}
+                        </div>
 
                         {/* 暗色模式切换 */}
                         <button
                             onClick={toggleTheme}
-                            className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                            className="w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition"
                             aria-label={isDark ? "切换到明亮模式" : "切换到暗色模式"}
                         >
                             {isDark ? (
