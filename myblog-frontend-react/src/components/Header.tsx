@@ -175,7 +175,7 @@ export default function Header() {
                         <div ref={searchContainerRef} className="relative h-9 items-center hidden md:flex">
                             <form
                                 onSubmit={handleSubmit}
-                                className={`absolute right-0 top-0 h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? `w-52 sm:w-64 px-2 shadow-md dark:shadow-md scale-100 ${condensed ? 'border border-white/10 bg-black/50 dark:bg-black/50 backdrop-blur ring-1 ring-white/10' : 'border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30'}` : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
+                                className={`absolute right-0 top-0 h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? `w-40 sm:w-52 lg:w-64 px-2 shadow-md dark:shadow-md scale-100 ${condensed ? 'border border-white/10 bg-black/50 dark:bg-black/50 backdrop-blur ring-1 ring-white/10' : 'border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30'}` : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
                             >
                                 <input
                                     ref={inputRef}
