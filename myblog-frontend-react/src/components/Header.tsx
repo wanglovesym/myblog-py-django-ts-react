@@ -297,7 +297,7 @@ export default function Header() {
                                                 setMobileMenuOpen(false);
                                                 setQuery('');
                                             }}
-                                            className={`ml-auto relative h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? `w-full max-w-[12rem] px-2 shadow-md dark:shadow-md scale-100 ${condensed ? 'border border-white/10 bg-black/50 dark:bg-black/50 backdrop-blur ring-1 ring-white/10' : 'border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30'}` : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
+                                            className={`ml-auto relative h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? `w-48 px-2 shadow-md dark:shadow-md scale-100 ${condensed ? 'border border-white/10 bg-black/50 dark:bg-black/50 backdrop-blur ring-1 ring-white/10' : 'border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30'}` : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
                                         >
                                             <input
                                                 ref={inputRef}
