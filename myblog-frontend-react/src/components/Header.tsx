@@ -127,8 +127,8 @@ export default function Header() {
         >
             <div
                 className={`mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${condensed
-                        ? 'max-w-4xl mt-2 rounded-2xl bg-black/60 dark:bg-black/60 border border-white/10 shadow-lg backdrop-blur'
-                        : 'max-w-[1040px] bg-transparent border-transparent'
+                    ? 'max-w-4xl mt-2 rounded-2xl bg-black/60 dark:bg-black/60 border border-white/10 shadow-lg backdrop-blur'
+                    : 'max-w-[1040px] bg-transparent border-transparent'
                     }`}
             >
                 <div className={`grid grid-cols-2 md:grid-cols-3 items-center transition-all duration-300 ${condensed ? 'h-12' : 'h-16'}`}>
@@ -160,7 +160,7 @@ export default function Header() {
                         <div ref={searchContainerRef} className="relative h-9 items-center hidden md:flex">
                             <form
                                 onSubmit={handleSubmit}
-                                className={`absolute right-0 top-0 h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? 'w-52 sm:w-64 px-2 shadow-md dark:shadow-md scale-100 border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30' : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
+                                className={`absolute right-0 top-0 h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? `w-52 sm:w-64 px-2 shadow-md dark:shadow-md scale-100 ${condensed ? 'border border-white/10 bg-black/50 dark:bg-black/50 backdrop-blur ring-1 ring-white/10' : 'border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30'}` : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
                             >
                                 <input
                                     ref={inputRef}
@@ -250,7 +250,7 @@ export default function Header() {
                         {menuMounted && (
                             <div
                                 ref={mobileMenuRef}
-                                className={`fixed left-0 right-0 md:hidden z-50 w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg origin-top overflow-hidden ${mobileMenuOpen ? 'animate-dropdown' : 'animate-dropdown-out'}`}
+                                className={`fixed left-0 right-0 md:hidden z-50 origin-top overflow-hidden ${mobileMenuOpen ? 'animate-dropdown' : 'animate-dropdown-out'} ${condensed ? 'mx-auto max-w-4xl mt-2 rounded-2xl bg-black/60 dark:bg-black/60 border border-white/10 shadow-lg backdrop-blur' : 'w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg'}`}
                                 style={{ top: headerHeight }}
                             >
                                 <div className="py-2 px-4 flex flex-col items-end text-right">
@@ -282,7 +282,7 @@ export default function Header() {
                                                 setMobileMenuOpen(false);
                                                 setQuery('');
                                             }}
-                                            className={`ml-auto relative h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? 'w-full max-w-[12rem] px-2 shadow-md dark:shadow-md scale-100 border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30' : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
+                                            className={`ml-auto relative h-9 flex items-center rounded-md overflow-hidden transition-all duration-300 ${searchOpen ? `w-full max-w-[12rem] px-2 shadow-md dark:shadow-md scale-100 ${condensed ? 'border border-white/10 bg-black/50 dark:bg-black/50 backdrop-blur ring-1 ring-white/10' : 'border border-gray-300 dark:border-gray-600 bg-white/95 dark:bg-slate-800/95 backdrop-blur ring-1 ring-blue-200/50 dark:ring-blue-300/30'}` : 'w-9 px-0 scale-90 border-transparent bg-transparent shadow-none'} `}
                                         >
                                             <input
                                                 ref={inputRef}
