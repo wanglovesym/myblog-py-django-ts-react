@@ -57,6 +57,11 @@ export default function Header() {
                 setHidden(false);
             }
             lastYRef.current = y;
+            // 滚动时同步测量头部高度，确保下拉 top 精确贴合
+            if (headerRef.current) {
+                const h = headerRef.current.getBoundingClientRect().height;
+                setHeaderHeight(h);
+            }
         };
         const onResize = () => {
             if (headerRef.current) {
@@ -73,6 +78,16 @@ export default function Header() {
             window.removeEventListener('resize', onResize);
         };
     }, []);
+
+    // 当收缩状态变化时再次测量，避免初始高度缓存导致间距过大
+    useEffect(() => {
+        if (headerRef.current) {
+            requestAnimationFrame(() => {
+                const h = headerRef.current!.getBoundingClientRect().height;
+                setHeaderHeight(h);
+            });
+        }
+    }, [condensed]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -250,8 +265,8 @@ export default function Header() {
                         {menuMounted && (
                             <div
                                 ref={mobileMenuRef}
-                                className={`fixed left-0 right-0 md:hidden z-50 origin-top overflow-hidden ${mobileMenuOpen ? 'animate-dropdown' : 'animate-dropdown-out'} ${condensed ? 'mx-auto max-w-4xl mt-2 rounded-2xl bg-black/60 dark:bg-black/60 border border-white/10 shadow-lg backdrop-blur' : 'w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg'}`}
                                 style={{ top: headerHeight }}
+                                className={`fixed left-0 right-0 md:hidden z-50 origin-top overflow-hidden ${mobileMenuOpen ? 'animate-dropdown' : 'animate-dropdown-out'} ${condensed ? 'mx-auto max-w-4xl mt-[1px] rounded-2xl bg-black/60 dark:bg-black/60 border border-white/10 shadow-lg backdrop-blur' : 'w-screen border-t border-b border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur shadow-lg'}`}
                             >
                                 <div className="py-2 px-4 flex flex-col items-end text-right">
                                     <Link
