@@ -81,9 +81,7 @@ export default function Home() {
                                      hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white 
                                      transition-all transform hover:scale-110"
                         >
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.11.82-.26.82-.58v-2.02c-3.35.73-4.06-1.62-4.06-1.62-.55-1.4-1.35-1.77-1.35-1.77-1.1-.75.08-.73.08-.73 1.22.09 1.86 1.25 1.86 1.25 1.08 1.85 2.84 1.32 3.53 1.01.11-.79.42-1.32.76-1.62-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.4 1.24-3.24-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.31 1.23a11.5 11.5 0 0 1 6.02 0c2.3-1.55 3.31-1.23 3.31-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.92 1.24 3.24 0 4.64-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.21v3.28c0 .32.22.7.82.58A12 12 0 0 0 12 .5z" />
-                            </svg>
+                            <img src="/src/assets/icons/github.png" alt="GitHub" className="w-6 h-6" />
                         </a>
 
                         {/* CSDN */}
@@ -96,9 +94,7 @@ export default function Home() {
                                      hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white 
                                      transition-all transform hover:scale-110"
                         >
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M5.5 4h13c.825 0 1.5.675 1.5 1.5v13c0 .825-.675 1.5-1.5 1.5h-13c-.825 0-1.5-.675-1.5-1.5v-13C4 4.675 4.675 4 5.5 4zm1.5 3v2h2V7H7zm0 3v2h2v-2H7zm0 3v2h2v-2H7zm3-6v2h6V7h-6zm0 3v2h6v-2h-6zm0 3v2h6v-2h-6z" />
-                            </svg>
+                            <img src="/src/assets/icons/csdn.png" alt="CSDN" className="w-6 h-6" />
                         </a>
 
                         {/* 稀土掘金 */}
@@ -111,9 +107,7 @@ export default function Home() {
                                      hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white 
                                      transition-all transform hover:scale-110"
                         >
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2L2 12l2.5 2.5L12 7l7.5 7.5L22 12 12 2zm0 5L7 12l5 5 5-5-5-5z" />
-                            </svg>
+                            <img src="/src/assets/icons/juejin.png" alt="稀土掘金" className="w-6 h-6" />
                         </a>
 
                         {/* LinkedIn */}
@@ -126,9 +120,7 @@ export default function Home() {
                                      hover:bg-blue-700 hover:text-white dark:hover:bg-blue-700 dark:hover:text-white 
                                      transition-all transform hover:scale-110"
                         >
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
-                            </svg>
+                            <img src="/src/assets/icons/linkedin.png" alt="LinkedIn" className="w-6 h-6" />
                         </a>
                     </div>
                 </div>
