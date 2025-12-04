@@ -10,6 +10,9 @@ export const SOCIAL = {
     linkedin:
         import.meta.env.VITE_SOCIAL_LINKEDIN || "https://www.linkedin.com/",
     discord: import.meta.env.VITE_SOCIAL_DISCORD || "#",
+    neteasemusic:
+        import.meta.env.VITE_SOCIAL_NETEASEMUSIC ||
+        "https://music.163.com/#/user/home?id=424010164",
     wechat: import.meta.env.VITE_SOCIAL_WECHAT || "wanglovesym",
     email: import.meta.env.VITE_SOCIAL_EMAIL || "mailto:shixinw998@gmail.com"
 };

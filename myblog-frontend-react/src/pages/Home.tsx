@@ -8,6 +8,7 @@ import githubIcon from '../assets/icons/github.png';
 import csdnIcon from '../assets/icons/csdn.png';
 import juejinIcon from '../assets/icons/juejin.png';
 import linkedinIcon from '../assets/icons/linkedin.png';
+import neteasemusicIcon from '../assets/icons/neteasemusic.png';
 
 export default function Home() {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -125,6 +126,19 @@ export default function Home() {
                                      transition-all transform hover:scale-110"
                         >
                             <img src={linkedinIcon} alt="LinkedIn" className="w-6 h-6" />
+                        </a>
+
+                        {/* 网易云音乐 */}
+                        <a
+                            href={SOCIAL.neteasemusic}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="网易云音乐"
+                            className="p-3 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 
+                                     hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white 
+                                     transition-all transform hover:scale-110"
+                        >
+                            <img src={neteasemusicIcon} alt="网易云音乐" className="w-6 h-6" />
                         </a>
                     </div>
                 </div>
