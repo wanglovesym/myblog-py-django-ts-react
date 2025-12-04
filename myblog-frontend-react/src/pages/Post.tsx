@@ -47,6 +47,7 @@ export default function Post() {
     return (
         <article className="max-w-3xl">
             <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+            {/* Post Author and Dates */}
             <div className="text-sm text-gray-500 mb-6">
                 作者：{post.author.username} · 发布于 {new Date(post.created_at).toLocaleDateString()}
                 {post.updated_at &&
@@ -54,6 +55,8 @@ export default function Post() {
                         <> · 最后更新于 {new Date(post.updated_at).toLocaleDateString()}</>
                     )}
             </div>
+
+            {/* Post Category and Tags */}
             <div className="flex flex-wrap gap-2 mt-4 text-sm">
                 {post.category && (
                     <a
@@ -73,8 +76,9 @@ export default function Post() {
                     </a>
                 ))}
             </div>
+            {/* Post Detail */}
             <div
-                className="prose dark:prose-invert max-w-none"
+                className="prose mt-4 dark:prose-invert max-w-none"
                 dangerouslySetInnerHTML={{ __html: htmlContent }} // 使用预渲染的 HTML
             />
         </article>
