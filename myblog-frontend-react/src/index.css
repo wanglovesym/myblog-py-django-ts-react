@@ -4,6 +4,18 @@
 
 /* 动画已移入 Tailwind 配置（tailwind.config.js -> theme.extend.keyframes/animation） */
 
+/* Markdown 高亮样式 ==text== */
+mark {
+    background-color: rgba(254, 240, 138, 0.5); /* yellow-200 with opacity */
+    color: inherit;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.dark mark {
+    background-color: rgba(253, 224, 71, 0.3); /* yellow-300 with lower opacity for dark mode */
+}
+
 /* 顶部光晕 Overlay：仅在暗色模式显示，限制高度为初始视口高度，随内容滚动保持固定，不在后续屏出现 */
 .glow-overlay {
     position: absolute;

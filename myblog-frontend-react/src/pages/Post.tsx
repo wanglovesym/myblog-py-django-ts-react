@@ -10,6 +10,29 @@ import DOMPurify from 'dompurify';
 // 引入 API 配置：统一管理后端地址
 import { API_URL } from '../config/api';
 
+// 配置 marked 支持 ==高亮== 语法
+marked.use({
+    extensions: [{
+        name: 'highlight',
+        level: 'inline',
+        start(src: string) { return src.match(/==/)?.index; },
+        tokenizer(src: string) {
+            const rule = /^==([^=]+)==/;
+            const match = rule.exec(src);
+            if (match) {
+                return {
+                    type: 'highlight',
+                    raw: match[0],
+                    text: match[1].trim()
+                };
+            }
+        },
+        renderer(token: any) {
+            return `<mark>${token.text}</mark>`;
+        }
+    }]
+});
+
 export default function Post() {
     // 用于请求 /api/posts/${slug}/
     const { slug } = useParams<{ slug: string }>();
