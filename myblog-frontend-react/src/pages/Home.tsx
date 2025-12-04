@@ -4,6 +4,10 @@ import type { Post } from '../types';
 import axios from 'axios';
 import { API_URL } from '../config/api';
 import { SOCIAL } from '../config/social';
+import githubIcon from '../assets/icons/github.png';
+import csdnIcon from '../assets/icons/csdn.png';
+import juejinIcon from '../assets/icons/juejin.png';
+import linkedinIcon from '../assets/icons/linkedin.png';
 
 export default function Home() {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -81,7 +85,7 @@ export default function Home() {
                                      hover:bg-blue-500 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white 
                                      transition-all transform hover:scale-110"
                         >
-                            <img src="/src/assets/icons/github.png" alt="GitHub" className="w-6 h-6" />
+                            <img src={githubIcon} alt="GitHub" className="w-6 h-6" />
                         </a>
 
                         {/* CSDN */}
@@ -94,7 +98,7 @@ export default function Home() {
                                      hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white 
                                      transition-all transform hover:scale-110"
                         >
-                            <img src="/src/assets/icons/csdn.png" alt="CSDN" className="w-6 h-6" />
+                            <img src={csdnIcon} alt="CSDN" className="w-6 h-6" />
                         </a>
 
                         {/* 稀土掘金 */}
@@ -107,7 +111,7 @@ export default function Home() {
                                      hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white 
                                      transition-all transform hover:scale-110"
                         >
-                            <img src="/src/assets/icons/juejin.png" alt="稀土掘金" className="w-6 h-6" />
+                            <img src={juejinIcon} alt="稀土掘金" className="w-6 h-6" />
                         </a>
 
                         {/* LinkedIn */}
@@ -120,7 +124,7 @@ export default function Home() {
                                      hover:bg-blue-700 hover:text-white dark:hover:bg-blue-700 dark:hover:text-white 
                                      transition-all transform hover:scale-110"
                         >
-                            <img src="/src/assets/icons/linkedin.png" alt="LinkedIn" className="w-6 h-6" />
+                            <img src={linkedinIcon} alt="LinkedIn" className="w-6 h-6" />
                         </a>
                     </div>
                 </div>
