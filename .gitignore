@@ -17,8 +17,8 @@ myblog-backend-django/htmlcov/
 myblog-backend-django/.python-version
 
 # Docker 环境变量（包含敏感信息）
-.env.dev.django
-.env.prod.django
+.env.dev
+.env.prod
 .env*.local
 
 # Docker 备份文件

@@ -31,10 +31,10 @@ services:
         ports:
             - "8000:8000"
 
-        # 从文件加载环境变量（稍后会创建 .env.dev.django）
+        # 从文件加载环境变量
         # 这些变量会注入到容器中，Django 通过 os.getenv() 读取
         env_file:
-            - .env.dev.django
+            - .env.dev
 
         # 挂载卷（volume）：将主机目录映射到容器内
         # 格式："主机路径:容器路径"

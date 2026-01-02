@@ -24,6 +24,11 @@ RUN npm ci || npm install
 # 此时依赖已安装完毕，改动源码不会触发依赖重装
 COPY . .
 
+# 构建参数：从 docker-compose 或命令行传入
+# ARG 只在构建阶段生效，ENV 会设置到运行时环境
+ARG VITE_API_BASE_URL=https://api.wangshixin.me
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
 # 执行 Vite 构建命令
 # tsc -b：先用 TypeScript 编译器检查类型
 # vite build：打包生成生产环境的静态文件到 dist/ 目录

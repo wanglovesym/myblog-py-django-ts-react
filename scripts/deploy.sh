@@ -34,15 +34,15 @@ if [ ! -f "docker-compose.prod.yml" ]; then
 fi
 
 # 检查环境变量文件
-if [ ! -f ".env.prod.django" ]; then
-    log_error "未找到 .env.prod.django 文件"
-    log_info "请先复制并修改: cp .env.prod.django.example .env.prod.django"
+if [ ! -f ".env.prod" ]; then
+    log_error "未找到 .env.prod 文件"
+    log_info "请先复制并修改: cp .env.prod.example .env.prod"
     exit 1
 fi
 
 # 加载环境变量
 set -a
-source .env.prod.django
+source .env.prod
 set +a
 
 # 验证必要的环境变量

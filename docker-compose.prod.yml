@@ -16,7 +16,7 @@ services:
         container_name: myblog-db-prod
         # 共享同一生产 env 文件，避免密码不一致
         env_file:
-            - .env.prod.django
+            - .env.prod
         environment:
             POSTGRES_DB: myblog
             POSTGRES_USER: myblog
@@ -60,7 +60,7 @@ services:
 
         # 环境变量文件（生产配置）
         env_file:
-            - .env.prod.django # 包含 DEBUG=0、SECRET_KEY、数据库连接等
+            - .env.prod # 包含 DEBUG=0、SECRET_KEY、数据库连接等
 
         # 不对外暴露端口（仅供 proxy 内网访问）
         expose:
@@ -97,6 +97,9 @@ services:
         build:
             context: ./myblog-frontend-react # 使用前端目录作为构建上下文
             dockerfile: Dockerfile # 生产 Dockerfile（Node 构建 → Nginx 提供）
+            args:
+                # 从 .env.prod.frontend 或环境变量读取 API 地址
+                VITE_API_BASE_URL: ${VITE_API_BASE_URL:-https://api.wangshixin.me}
 
         container_name: myblog-frontend-prod
 
