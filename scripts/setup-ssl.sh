@@ -87,8 +87,16 @@ certbot certonly \
     --email $EMAIL \
     -d $DOMAIN
 
-# 创建证书目录
-mkdir -p /etc/letsencrypt
+# 复制证书到项目目录
+log_info "复制证书到项目目录..."
+mkdir -p nginx/ssl
+cp /etc/letsencrypt/live/$DOMAIN/fullchain.pem nginx/ssl/
+cp /etc/letsencrypt/live/$DOMAIN/privkey.pem nginx/ssl/
+chmod 644 nginx/ssl/*.pem
+
+# 更新 nginx 配置使用生产配置（带 SSL）
+log_info "更新 Nginx 配置..."
+cp nginx/conf.d/production.conf nginx/conf.d/default.conf
 
 # 重启服务
 log_info "重启服务..."
@@ -96,10 +104,10 @@ docker compose -f docker-compose.prod.yml up -d
 
 # 设置自动续期
 log_info "配置证书自动续期..."
-cat > /etc/cron.d/certbot-myblog << EOF
+cat > /etc/cron.d/certbot-myblog << CRON
 # 每天凌晨2点检查证书续期
-0 2 * * * root certbot renew --quiet --post-hook "docker restart myblog-proxy"
-EOF
+0 2 * * * root certbot renew --quiet --post-hook "cp /etc/letsencrypt/live/$DOMAIN/*.pem /root/myblog/nginx/ssl/ && docker restart myblog-proxy"
+CRON
 
 chmod 644 /etc/cron.d/certbot-myblog
 
@@ -110,10 +118,10 @@ echo "========================================"
 echo "  证书信息"
 echo "========================================"
 echo ""
-echo "  证书位置: /etc/letsencrypt/live/$DOMAIN/"
+echo "  证书位置: nginx/ssl/"
 echo "  有效期: 90天（已配置自动续期）"
 echo ""
-echo "  网站地址: https://$DOMAIN"
+echo "  网站地址: https://$DOMAIN:8443"
 echo ""
 echo "========================================"
 echo ""

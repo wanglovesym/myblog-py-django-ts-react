@@ -556,13 +556,13 @@ git add package.json package-lock.json
 
 项目提供了自动化部署脚本，位于 `scripts/` 目录：
 
-| 脚本 | 用途 | 运行时间 |
-|------|------|----------|
-| `setup-server.sh` | 服务器初始化（安装 Docker、配置防火墙） | ~3 分钟 |
-| `deploy.sh` | 构建镜像并启动服务 | ~5 分钟 |
-| `setup-ssl.sh` | 申请 SSL 证书并配置 HTTPS | ~2 分钟 |
-| `backup.sh` | 数据库备份 | ~10 秒 |
-| `test-api.sh` | API 接口测试 | ~5 秒 |
+| 脚本              | 用途                                    | 运行时间 |
+| ----------------- | --------------------------------------- | -------- |
+| `setup-server.sh` | 服务器初始化（安装 Docker、配置防火墙） | ~3 分钟  |
+| `deploy.sh`       | 构建镜像并启动服务                      | ~5 分钟  |
+| `setup-ssl.sh`    | 申请 SSL 证书并配置 HTTPS               | ~2 分钟  |
+| `backup.sh`       | 数据库备份                              | ~10 秒   |
+| `test-api.sh`     | API 接口测试                            | ~5 秒    |
 
 ### 快速部署步骤
 
