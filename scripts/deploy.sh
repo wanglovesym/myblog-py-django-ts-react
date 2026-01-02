@@ -46,13 +46,13 @@ source .env.prod.django
 set +a
 
 # 验证必要的环境变量
-if [ -z "$SECRET_KEY" ] || [ "$SECRET_KEY" = "your-production-secret-key-change-this" ]; then
-    log_error "请修改 SECRET_KEY 为一个安全的随机值"
+if [ -z "$DJANGO_SECRET_KEY" ] || [ "$DJANGO_SECRET_KEY" = "change-me-to-a-long-random-secret-key-in-production" ]; then
+    log_error "请修改 DJANGO_SECRET_KEY 为一个安全的随机值"
     log_info "生成方法: python3 -c \"import secrets; print(secrets.token_urlsafe(50))\""
     exit 1
 fi
 
-if [ -z "$POSTGRES_PASSWORD" ] || [ "$POSTGRES_PASSWORD" = "your-secure-postgres-password" ]; then
+if [ -z "$POSTGRES_PASSWORD" ] || [ "$POSTGRES_PASSWORD" = "change-me-to-strong-password" ]; then
     log_error "请修改 POSTGRES_PASSWORD 为一个安全的密码"
     exit 1
 fi
