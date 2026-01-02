@@ -100,7 +100,7 @@ cd myblog-py-django-ts-react
 
 ```bash
 # 从模板创建环境文件
-cp .env.dev.django.example .env.dev.django
+cp .env.dev.example .env.dev
 
 # 根据需要修改（默认配置即可用于本地开发）
 ```
@@ -177,52 +177,39 @@ docker compose -f docker-compose.prod.yml up -d
 git clone git@github.com:yourname/myblog-py-django-ts-react.git
 cd myblog-py-django-ts-react
 
-# 生产环境文件示例（按需修改）
-cp .env.prod.django.example .env.prod.django
-# 编辑：SECRET_KEY、数据库密码等
+# 生产环境文件（按需修改）
+cp .env.prod.example .env.prod
+# 编辑：SECRET_KEY、数据库密码、VITE_API_BASE_URL 等
 ```
 
-**2. 首次签发 HTTPS 证书**
+**2. 部署应用**
 
 ```bash
-# 推荐先使用暂存环境验证
-sudo ./deploy/certbot_setup.sh --domain=api.yourdomain.com --email=you@example.com --staging
-
-# 验证通过后申请正式证书
-sudo ./deploy/certbot_setup.sh --domain=api.yourdomain.com --email=you@example.com
+# 部署：构建镜像 + 启动服务 + 运行迁移
+./scripts/deploy.sh
 ```
 
-**3. 使用管理脚本部署**
+**3. 配置 HTTPS 证书**（DNS 生效后）
 
 ```bash
-# 全量部署（构建镜像并启动所有服务）
-./deploy/manage_prod.sh deploy-full
-
-# 或分步执行：
-./deploy/manage_prod.sh build      # 构建镜像并注入版本
-./deploy/manage_prod.sh up         # 启动/更新容器
-./deploy/manage_prod.sh status     # 查看运行状态
+./scripts/setup-ssl.sh
 ```
 
 ### 常用管理命令
 
 ```bash
 # 查看日志
-./deploy/manage_prod.sh logs backend
-./deploy/manage_prod.sh logs proxy
+docker compose -f docker-compose.prod.yml logs -f backend
+docker compose -f docker-compose.prod.yml logs -f proxy
 
 # 重启某服务
-./deploy/manage_prod.sh restart backend
+docker compose -f docker-compose.prod.yml restart backend
 
-# 健康检查与系统自检
-./deploy/manage_prod.sh self-test
+# 数据库备份
+./scripts/backup.sh
 
-# 证书续期（自动续期，以下为手动测试）
-./deploy/manage_prod.sh renew-dry-run
-./deploy/manage_prod.sh renew
-
-# 查看全部命令
-./deploy/manage_prod.sh help
+# 查看容器状态
+docker compose -f docker-compose.prod.yml ps
 ```
 
 ### 生产架构概览
@@ -252,7 +239,7 @@ PostgreSQL
 -   🔐 **安全头**：HSTS、CSP、X-Frame-Options 等
 -   📦 **平滑更新**：Docker Compose 支持滚动重启
 
-> 💡 所有部署脚本位于 `deploy/` 目录。`manage_prod.sh` 用于运维管理，`certbot_setup.sh` 用于证书签发与续期。
+> 💡 所有部署脚本位于 `scripts/` 目录。`deploy.sh` 用于部署，`setup-ssl.sh` 用于证书管理，`backup.sh` 用于数据库备份。
 
 ---
 

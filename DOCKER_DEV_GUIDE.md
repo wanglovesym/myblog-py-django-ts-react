@@ -35,10 +35,10 @@ myblog-py-django-ts-react/
 │   └── nginx.conf                   # 反代（/api → backend，/ → frontend，HTTP/未来 HTTPS）
 ├── docker-compose.dev.yml           # 开发编排（Vite + runserver + Postgres）
 ├── docker-compose.prod.yml          # 生产编排（Proxy + Frontend + Backend + Postgres）
-├── .env.dev.django                  # 开发环境变量（不提交）
-├── .env.dev.django.example          # 开发环境变量模板
-├── .env.prod.django                 # 生产环境变量（不提交）
-├── .env.prod.django.example         # 生产环境变量模板
+├── .env.dev                         # 开发环境变量（不提交）
+├── .env.dev.example                 # 开发环境变量模板
+├── .env.prod                        # 生产环境变量（不提交）
+├── .env.prod.example                # 生产环境变量模板
 └── DOCKER_DEV_GUIDE.md              # 本文档
 ```
 
@@ -57,13 +57,13 @@ myblog-py-django-ts-react/
 1. 复制模板文件：
 
 ```bash
-cp .env.dev.django.example .env.dev.django
+cp .env.dev.example .env.dev
 ```
 
 2. 检查配置（通常无需修改）：
 
 ```bash
-cat .env.dev.django
+cat .env.dev
 ```
 
 **关键配置说明**

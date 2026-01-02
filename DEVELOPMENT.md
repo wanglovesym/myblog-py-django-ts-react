@@ -105,7 +105,7 @@ npm run dev
 # 1）加载环境变量（解决 admin 样式与 PostgreSQL 切换问题）
 cd <项目根目录>
 set -a
-source .env.dev.django
+source .env.dev
 set +a
 
 # 2）启动后端
@@ -121,7 +121,7 @@ npm run dev  # → http://localhost:5173
 
 重要说明：
 
--   需要确保 `.env.dev.django` 中 `DEBUG=1`，否则开发服务器不会提供 admin 的静态文件（CSS/JS 会 404）。
+-   需要确保 `.env.dev` 中 `DEBUG=1`，否则开发服务器不会提供 admin 的静态文件（CSS/JS 会 404）。
 -   设置 `POSTGRES_*` 变量即可让后端连接 Docker 中的 PostgreSQL（记得先启动 `db` 容器：`docker compose -f docker-compose.dev.yml up -d db`）。
 -   如需免手动 source，可考虑使用 `direnv` 或在 `settings.py` 引入 `python-dotenv`（仅限本地开发）。
 
@@ -340,12 +340,12 @@ docker compose -f docker-compose.dev.yml down -v
 
 ### Q0: 本地运行 `python manage.py runserver`，admin 样式丢失或仍然用 SQLite？
 
-原因通常是没有加载根目录的 `.env.dev.django`：
+原因通常是没有加载根目录的 `.env.dev`：
 
 ```bash
 # 在项目根目录加载环境变量（zsh）
 set -a
-source .env.dev.django
+source .env.dev
 set +a
 
 # 确保已启动 PostgreSQL 容器
@@ -398,7 +398,7 @@ docker compose -f docker-compose.dev.yml up --build
 
 **本地开发：**
 
--   确保 `.env.dev.django` 中 `CORS_ALLOW_ALL_ORIGINS=true`
+-   确保 `.env.dev` 中 `CORS_ALLOW_ALL_ORIGINS=true`
 -   或在 `settings.py` 的 `CORS_ALLOWED_ORIGINS` 中添加 `http://localhost:5173`
 
 **Docker 开发：**
@@ -428,7 +428,7 @@ docker compose -f docker-compose.dev.yml up --build
 # 1. 启动 PostgreSQL 容器
 docker compose -f docker-compose.dev.yml up -d db
 
-# 2. 修改 .env.dev.django，取消注释 POSTGRES_* 变量
+# 2. 修改 .env.dev，取消注释 POSTGRES_* 变量
 
 # 3. 迁移数据库
 source .venv/bin/activate
@@ -439,7 +439,7 @@ python manage.py createsuperuser
 **切换回 SQLite：**
 
 ```bash
-# 1. 修改 .env.dev.django，注释掉 POSTGRES_* 变量
+# 1. 修改 .env.dev，注释掉 POSTGRES_* 变量
 
 # 2. 使用默认 SQLite
 python manage.py migrate
@@ -480,7 +480,7 @@ refactor(components): extract Header component
 -   [ ] 切换到正确分支：`git checkout dev/frontend`
 -   [ ] 依赖是否最新：`npm install` / `pip install -r requirements.txt`
 -   [ ] 数据库是否迁移：`python manage.py migrate`
--   [ ] 环境变量是否配置：检查 `.env.dev.django`
+-   [ ] 环境变量是否配置：检查 `.env.dev`
 
 ### 依赖管理规范
 
@@ -583,8 +583,8 @@ chmod +x scripts/*.sh
 #### 2. 配置环境变量
 
 ```bash
-cp .env.prod.django.example .env.prod.django
-vim .env.prod.django
+cp .env.prod.example .env.prod
+vim .env.prod
 ```
 
 **必须修改的配置：**
@@ -622,8 +622,8 @@ docker compose -f docker-compose.prod.yml exec backend python manage.py createsu
 │  1. setup-server.sh                                     │
 │     └── 安装 Docker、配置防火墙、优化系统               │
 │                         ↓                               │
-│  2. 配置 .env.prod.django（手动）                       │
-│     └── 设置密码和密钥                                  │
+│  2. 配置 .env.prod（手动）                                 │
+│     └── 设置密码、密钥和 VITE_API_BASE_URL               │
 │                         ↓                               │
 │  3. deploy.sh                                           │
 │     └── 构建镜像、启动容器、运行迁移                    │

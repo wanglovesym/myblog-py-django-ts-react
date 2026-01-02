@@ -103,7 +103,7 @@ cd myblog-py-django-ts-react
 
 ```bash
 # Create environment file from template
-cp .env.dev.django.example .env.dev.django
+cp .env.dev.example .env.dev
 
 # Edit if needed (default values work for local development)
 ```
@@ -181,51 +181,38 @@ git clone git@github.com:yourname/myblog-py-django-ts-react.git
 cd myblog-py-django-ts-react
 
 # Create production environment file
-cp .env.prod.django.example .env.prod.django
-# Edit with your values: SECRET_KEY, DB passwords, etc.
+cp .env.prod.example .env.prod
+# Edit with your values: SECRET_KEY, DB passwords, VITE_API_BASE_URL, etc.
 ```
 
-**2. Run HTTPS certificate setup** (first-time only)
+**2. Deploy the application**
 
 ```bash
-# Test with staging environment first (recommended)
-sudo ./deploy/certbot_setup.sh --domain=api.yourdomain.com --email=you@example.com --staging
-
-# Once validated, apply for production certificate
-sudo ./deploy/certbot_setup.sh --domain=api.yourdomain.com --email=you@example.com
+# Deploy: build images + start services + run migrations
+./scripts/deploy.sh
 ```
 
-**3. Deploy using management script**
+**3. Setup HTTPS certificate** (after DNS is configured)
 
 ```bash
-# Full deployment: build images + start services
-./deploy/manage_prod.sh deploy-full
-
-# Or step by step:
-./deploy/manage_prod.sh build      # Build images with version tag
-./deploy/manage_prod.sh up         # Start/update containers
-./deploy/manage_prod.sh status     # Check running status
+./scripts/setup-ssl.sh
 ```
 
 ### Management Commands
 
 ```bash
 # View service logs
-./deploy/manage_prod.sh logs backend
-./deploy/manage_prod.sh logs proxy
+docker compose -f docker-compose.prod.yml logs -f backend
+docker compose -f docker-compose.prod.yml logs -f proxy
 
 # Restart specific service
-./deploy/manage_prod.sh restart backend
+docker compose -f docker-compose.prod.yml restart backend
 
-# Health check & system diagnostics
-./deploy/manage_prod.sh self-test
+# Database backup
+./scripts/backup.sh
 
-# Certificate renewal (auto-renewed, manual test)
-./deploy/manage_prod.sh renew-dry-run
-./deploy/manage_prod.sh renew
-
-# See all available commands
-./deploy/manage_prod.sh help
+# Check container status
+docker compose -f docker-compose.prod.yml ps
 ```
 
 ### Production Architecture
@@ -255,7 +242,7 @@ PostgreSQL
 -   🔐 **Security Headers**: HSTS, CSP, X-Frame-Options, etc.
 -   📦 **Zero-downtime Updates**: Rolling restart support via Docker Compose
 
-> 💡 **Tip**: All deployment scripts are located in `deploy/` directory. Review `manage_prod.sh` for remote SSH operations and `certbot_setup.sh` for certificate management details.
+> 💡 **Tip**: All deployment scripts are located in `scripts/` directory. Use `deploy.sh` for deployment, `setup-ssl.sh` for certificate management, and `backup.sh` for database backups.
 
 ---
 
