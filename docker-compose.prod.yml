@@ -113,18 +113,18 @@ services:
         image: nginx:1.27-alpine # 轻量 Nginx 镜像
         container_name: myblog-proxy
 
-        # 对外公开端口（避免与其他项目冲突，使用 8080/8443）
+        # 对外公开端口
         ports:
-            - "8080:80" # HTTP 入口
-            - "8443:443" # HTTPS 入口
+            - "80:80" # HTTP 入口
+            - "443:443" # HTTPS 入口
 
         # 挂载自定义配置
         volumes:
-            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro    # 全局配置
-            - ./nginx/conf.d:/etc/nginx/conf.d:ro            # 站点配置
-            - ./nginx/ssl:/etc/nginx/ssl:ro                  # SSL 证书
-            - static_files:/app/staticfiles:ro               # Django 静态文件
-            - /var/www/certbot:/var/www/certbot              # ACME 验证
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro # 全局配置
+            - ./nginx/conf.d:/etc/nginx/conf.d:ro # 站点配置
+            - ./nginx/ssl:/etc/nginx/ssl:ro # SSL 证书
+            - static_files:/app/staticfiles:ro # Django 静态文件
+            - /var/www/certbot:/var/www/certbot # ACME 验证
 
         # 依赖：等待前后端服务就绪
         depends_on:
