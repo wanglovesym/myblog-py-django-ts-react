@@ -13,7 +13,12 @@ mark {
 }
 
 .dark mark {
-    background-color: rgba(253, 224, 71, 0.3); /* yellow-300 with lower opacity for dark mode */
+    background-color: rgba(
+        253,
+        224,
+        71,
+        0.3
+    ); /* yellow-300 with lower opacity for dark mode */
 }
 
 /* 顶部光晕 Overlay：仅在暗色模式显示，限制高度为初始视口高度，随内容滚动保持固定，不在后续屏出现 */
