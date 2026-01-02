@@ -53,11 +53,11 @@ if ! command -v docker &> /dev/null; then
     
     # 检测是否在中国内地（根据时区或语言环境判断）
     if [ -f /etc/timezone ] && grep -q "Asia/Shanghai" /etc/timezone; then
-        log_info "检测到中国内地服务器，使用阿里云镜像源..."
-        # 添加阿里云 Docker GPG 密钥
-        curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-        # 添加阿里云 Docker 仓库
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+        log_info "检测到中国内地服务器，使用国内镜像源..."
+        # 添加 Docker GPG 密钥（使用清华镜像）
+        curl -fsSL https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+        # 添加 Docker 仓库（使用清华镜像）
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
     else
         log_info "使用官方 Docker 源..."
         # 添加官方 Docker GPG 密钥
@@ -118,11 +118,14 @@ EOF
 
 sysctl -p 2>/dev/null || true
 
-# 配置 Docker 日志轮转
-log_info "配置 Docker 日志轮转..."
+# 配置 Docker 日志轮转和镜像加速
+log_info "配置 Docker（日志轮转 + 镜像加速）..."
 mkdir -p /etc/docker
 cat > /etc/docker/daemon.json << 'EOF'
 {
+  "registry-mirrors": [
+    "https://docker.1ms.run"
+  ],
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "10m",
