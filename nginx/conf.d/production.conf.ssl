@@ -20,18 +20,31 @@ server {
     }
 }
 
-# HTTPS 主配置
+# www.wangshixin.me -> wangshixin.me 重定向
 server {
     listen 443 ssl;
     http2 on;
-    server_name api.wangshixin.me wangshixin.me www.wangshixin.me;
+    server_name www.wangshixin.me;
+
+    ssl_certificate /etc/nginx/ssl/wangshixin.me.crt;
+    ssl_certificate_key /etc/nginx/ssl/wangshixin.me.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    return 301 https://wangshixin.me$request_uri;
+}
+
+# 主站 HTTPS 配置 (wangshixin.me)
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name wangshixin.me;
 
     # 上传文件大小限制（20MB）
     client_max_body_size 20M;
 
     # SSL 证书配置
-    ssl_certificate /etc/nginx/ssl/fullchain.pem;
-    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+    ssl_certificate /etc/nginx/ssl/wangshixin.me.crt;
+    ssl_certificate_key /etc/nginx/ssl/wangshixin.me.key;
     
     # SSL 安全配置
     ssl_protocols TLSv1.2 TLSv1.3;
@@ -123,5 +136,61 @@ server {
         access_log off;
         return 200 "OK";
         add_header Content-Type text/plain;
+    }
+}
+
+# API 子域 HTTPS 配置 (api.wangshixin.me)
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name api.wangshixin.me;
+
+    client_max_body_size 20M;
+
+    ssl_certificate /etc/nginx/ssl/api.wangshixin.me.crt;
+    ssl_certificate_key /etc/nginx/ssl/api.wangshixin.me.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
+
+    # 安全头
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Django 静态文件
+    location /static/ {
+        alias /app/staticfiles/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Django Admin
+    location /admin/ {
+        proxy_pass http://backend:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # API 接口
+    location /api/ {
+        proxy_pass http://backend:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # CORS 头
+        add_header 'Access-Control-Allow-Origin' '$http_origin' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+        add_header 'Access-Control-Allow-Credentials' 'true' always;
+    }
+
+    # 根路径重定向到主站
+    location / {
+        return 301 https://wangshixin.me$request_uri;
     }
 }
