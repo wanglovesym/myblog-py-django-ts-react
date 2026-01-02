@@ -39,3 +39,7 @@ myblog-frontend-react/tsconfig.tsbuildinfo
 .vscode/
 .idea/
 .DS_Storemyblog-backend-django/media/
+
+# macOS
+.DS_Store
+**/.DS_Store

@@ -3,44 +3,83 @@
 > 🇨🇳 中文版文档：请查看 [README.zh-CN.md](README.zh-CN.md)
 > 🛠 开发指南：请查看 [DEVELOPMENT.md](DEVELOPMENT.md)
 
-A modern, clean, and responsive personal blog built with **Django REST Framework** (backend) and **React + TypeScript** (frontend), featuring Markdown support, category/tag organization, and full-text search.
+A modern, clean, and responsive personal Site built with **Django REST Framework** (backend) and **React + TypeScript** (frontend), featuring Markdown support, category/tag organization, project showcase, and full-text search.
 
-> ✨ **Live Demo**: [Coming soon...]  
+> ✨ **Live Demo**: [https://www.wangshixin.me](https://www.wangshixin.me)  
 > 📦 **Tech Stack**: Python 3.12 · Django 5.2 · DRF · PostgreSQL · React 19 · Vite · TypeScript · Tailwind CSS
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+### Home Page
+
+![Home Page](docs/images/home-dark.png)
+
+### Blog Posts
+
+![Blog Posts](docs/images/blog-dark.png)
+
+### Project Showcase
+
+![Projects](docs/images/projects-dark.png)
+
+</div>
 
 ---
 
 ## 🌟 Features
 
--   ✅ **文章管理**：Markdown 编辑、草稿/发布状态、自动 slug 生成（支持中文）
--   ✅ **分类 & 标签**：文章可归属一个分类，打多个标签
--   ✅ **全文搜索**：按标题、摘要、正文模糊搜索
--   ✅ **响应式设计**：适配手机、平板、桌面
--   ✅ **安全防护**：XSS 过滤（DOMPurify）、CORS 配置、敏感字段保护
--   ✅ **开发者友好**：TypeScript 类型安全、Docker 支持、前后端分离架构
+### Blog
+
+-   ✅ **Post Management**: Markdown editing with syntax highlighting, draft/published status, auto slug generation (Chinese supported)
+-   ✅ **Category & Tags**: Posts can belong to one category with multiple tags
+-   ✅ **Full-text Search**: Search by title, excerpt, or content
+-   ✅ **Code Highlighting**: Beautiful code blocks with highlight.js
+
+### Project Showcase
+
+-   ✅ **Project Portfolio**: Showcase your projects with cover images, tech stack, and live demo links
+-   ✅ **Tech Stack Display**: Separate TechStack model with icons and colors
+-   ✅ **Status Badges**: Developing / Completed / Online / Offline status indicators
+-   ✅ **Featured Projects**: Highlight your best projects on the home page carousel
+
+### General
+
+-   ✅ **Responsive Design**: Mobile, tablet, and desktop friendly
+-   ✅ **Dark Mode**: Beautiful dark theme with glassmorphism effects
+-   ✅ **Security**: XSS filtering (DOMPurify), CORS configuration, sensitive field protection
+-   ✅ **Developer Friendly**: TypeScript type safety, Docker support, decoupled architecture
 
 ---
 
 ## 🗂️ Project Structure
 
 ```bash
-myblog-py-django-ts-react/      # 项目根目录
-├── myblog-backend-django/      # Django 后端
-│   ├── blog/                   # 博客核心应用
-│   ├── myblog/                 # 项目配置
+myblog-py-django-ts-react/        # Project root
+├── myblog-backend-django/        # Django backend
+│   ├── blog/                     # Blog app (Post, Category, Tag)
+│   ├── project/                  # Project app (Project, TechStack)
+│   ├── config/                   # Project settings (settings, urls, wsgi)
 │   ├── manage.py
 │   └── requirements.txt
 │
-├── myblog-frontend-react/      # React + TypeScript 前端
+├── myblog-frontend-react/        # React + TypeScript frontend
 │   ├── src/
-│   │   ├── pages/             # 页面组件（Home, Post, Category, Tag 等）
-│   │   ├── components/        # 通用组件（Header, CategoryList 等）
-│   │   └── types/             # TypeScript 接口定义
+│   │   ├── pages/               # Page components (Home, Post, Projects, etc.)
+│   │   ├── components/          # Shared components (Header, CategoryList, etc.)
+│   │   ├── config/              # API and social link configuration
+│   │   └── types/               # TypeScript interface definitions
 │   ├── tailwind.config.js
 │   └── package.json
 │
-├── .gitignore
-└── README.md                   # 本文件
+├── deploy/                       # Deployment scripts (nginx, certbot, etc.)
+├── docs/                         # Documentation and images
+├── docker-compose.dev.yml        # Development Docker Compose
+├── docker-compose.prod.yml       # Production Docker Compose
+└── README.md                     # This file
 ```
 
 ---
@@ -49,60 +88,60 @@ myblog-py-django-ts-react/      # 项目根目录
 
 ### Prerequisites
 
--   Python 3.12+
--   Node.js 18+ (LTS)
+-   Docker & Docker Compose
 -   Git
+-   Make (optional, for convenience commands)
 
 ### 1. Clone the repository
 
 ```bash
-git clone git@github.com:yourname/myblog-py-django-ts-react.git
+git clone git@github.com:wanglovesym/myblog-py-django-ts-react.git
 cd myblog-py-django-ts-react
 ```
 
-### 2. Start the backend (Django)
+### 2. Configure environment variables
 
 ```bash
-# Navigate to backend
-cd myblog-backend-django
+# Create environment file from template
+cp .env.dev.django.example .env.dev.django
 
-# Create virtual environment
-python3.12 -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Apply migrations
-python manage.py migrate
-
-# Create superuser (follow prompts)
-python manage.py createsuperuser
-
-# Start development server
-python manage.py runserver
-# → API available at http://127.0.0.1:8000/api/
+# Edit if needed (default values work for local development)
 ```
 
-### 3. Start the frontend (React + Vite)
+### 3. Start development environment
 
 ```bash
-# Open a new terminal
-cd myblog-frontend-react
+# Using Make (recommended)
+make init          # First time: start containers + run migrations
 
-# Install dependencies
-npm install
-
-# Start dev server
-npm run dev
-# → Frontend available at http://localhost:5173
+# Or manually with Docker Compose
+docker compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml exec backend python manage.py migrate
 ```
 
-### 4. Write your first post
+### 4. Create admin user and start creating content
 
--   Visit `http://127.0.0.1:8000/admin`
--   Log in with your superuser credentials
--   Create a **Category**, **Tag**, and **Post** (remember to uncheck "Is draft")
+```bash
+make superuser     # Follow prompts to create admin account
+```
+
+Then visit:
+
+-   🌐 **Frontend**: http://localhost:5173
+-   💻 **Backend API**: http://localhost:8000/api/
+-   🔐 **Admin Panel**: http://localhost:8000/admin/
+
+### Common Development Commands
+
+```bash
+make dev-up-d           # Start in background
+make dev-down           # Stop all containers
+make dev-logs           # View logs
+make dev-rebuild        # Rebuild after dependency changes
+make shell              # Enter backend container shell
+make migrate            # Run database migrations
+make help               # Show all available commands
+```
 
 ---
 

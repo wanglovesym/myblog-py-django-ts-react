@@ -1,18 +1,52 @@
 # 📝 个人博客（中文文档）
 
-一个由 **Django REST Framework**（后端）与 **React + TypeScript**（前端）构建的现代、简洁、响应式个人博客。支持 Markdown、分类/标签管理、全文搜索与生产级部署。
+一个由 **Django REST Framework**（后端）与 **React + TypeScript + Tailwind CSS**（前端）构建响应式个人站。整体设计遵循简约风格。支持 Markdown、分类/标签管理、项目展示、全文搜索。
 
-> ✨ 在线演示：待发布
+> ✨ 在线演示：[https://www.wangshixin.me](https://www.wangshixin.me)
 > 📦 技术栈：Python 3.12 · Django 5.2 · DRF · PostgreSQL · React 19 · Vite · TypeScript · Tailwind CSS
+
+---
+
+## 📸 效果截图
+
+<div align="center">
+
+### 首页
+
+![首页](docs/images/home-dark.png)
+
+### 博客文章
+
+![博客](docs/images/blog-dark.png)
+
+### 项目展示
+
+![项目](docs/images/projects-dark.png)
+
+</div>
 
 ---
 
 ## 🌟 功能特性
 
--   ✅ **文章管理**：Markdown 编辑、草稿/发布状态、中文友好 slug 自动生成
+### 博客模块
+
+-   ✅ **文章管理**：Markdown 编辑带语法高亮、草稿/发布状态、中文友好 slug 自动生成
 -   ✅ **分类 & 标签**：文章可归属一个分类，打多个标签
 -   ✅ **全文搜索**：按标题、摘要、正文进行模糊搜索
+-   ✅ **代码高亮**：使用 highlight.js 实现漂亮的代码块展示
+
+### 项目展示模块
+
+-   ✅ **项目作品集**：展示项目，包含封面图、技术栈、在线演示链接
+-   ✅ **技术栈展示**：独立的 TechStack 模型，支持自定义图标和颜色
+-   ✅ **状态标签**：开发中 / 已完成 / 已上线 / 暂时下线 状态指示
+-   ✅ **精选项目**：精选项目将在首页以轮播显示，最多显示 6 条
+
+### 通用特性
+
 -   ✅ **响应式设计**：适配手机、平板与桌面端
+-   ✅ **深色模式**：简约风格，带毛玻璃效果
 -   ✅ **安全防护**：XSS 过滤（DOMPurify）、CORS 配置、敏感字段保护
 -   ✅ **开发者友好**：TypeScript 类型安全、Docker 支持、前后端分离架构
 
@@ -21,24 +55,28 @@
 ## 🗂️ 项目结构
 
 ```bash
-myblog-py-django-ts-react/      # 项目根目录
-├── myblog-backend-django/      # Django 后端
-│   ├── blog/                   # 博客核心应用
-│   ├── myblog/                 # 项目配置（settings/urls 等）
+myblog-py-django-ts-react/        # 项目根目录
+├── myblog-backend-django/        # Django 后端
+│   ├── blog/                     # 博客应用（Post、Category、Tag）
+│   ├── project/                  # 项目应用（Project、TechStack）
+│   ├── config/                   # 项目配置（settings、urls、wsgi）
 │   ├── manage.py
 │   └── requirements.txt
 │
-├── myblog-frontend-react/      # React + TypeScript 前端
+├── myblog-frontend-react/        # React + TypeScript 前端
 │   ├── src/
-│   │   ├── pages/             # 页面组件（Home, Post, Category, Tag 等）
-│   │   ├── components/        # 通用组件（Header, CategoryList 等）
-│   │   └── types/             # TypeScript 接口定义
+│   │   ├── pages/               # 页面组件（Home、Post、Projects 等）
+│   │   ├── components/          # 通用组件（Header、CategoryList 等）
+│   │   ├── config/              # API 和社交链接配置
+│   │   └── types/               # TypeScript 接口定义
 │   ├── tailwind.config.js
 │   └── package.json
 │
-├── staticfiles/                # Django 静态资源（生产收集）
-├── .gitignore
-└── README.md                   # 英文/混合版本说明
+├── deploy/                       # 部署脚本（nginx、certbot 等）
+├── docs/                         # 文档和图片
+├── docker-compose.dev.yml        # 开发环境 Docker Compose
+├── docker-compose.prod.yml       # 生产环境 Docker Compose
+└── README.md                     # 英文版说明
 ```
 
 ---
@@ -47,60 +85,60 @@ myblog-py-django-ts-react/      # 项目根目录
 
 ### 环境要求
 
--   Python 3.12+
--   Node.js 18+（LTS）
+-   Docker & Docker Compose
 -   Git
+-   Make（可选，用于快捷命令）
 
 ### 1）克隆仓库
 
 ```bash
-git clone git@github.com:yourname/myblog-py-django-ts-react.git
+git clone git@github.com:wanglovesym/myblog-py-django-ts-react.git
 cd myblog-py-django-ts-react
 ```
 
-### 2）启动后端（Django）
+### 2）配置环境变量
 
 ```bash
-# 进入后端目录
-cd myblog-backend-django
+# 从模板创建环境文件
+cp .env.dev.django.example .env.dev.django
 
-# 创建并激活虚拟环境
-python3.12 -m venv .venv
-source .venv/bin/activate
-
-# 安装依赖
-pip install -r requirements.txt
-
-# 数据库迁移
-python manage.py migrate
-
-# 创建管理员（根据提示输入）
-python manage.py createsuperuser
-
-# 启动开发服务
-python manage.py runserver
-# → API: http://127.0.0.1:8000/api/
+# 根据需要修改（默认配置即可用于本地开发）
 ```
 
-### 3）启动前端（React + Vite）
+### 3）启动开发环境
 
 ```bash
-# 打开新终端并进入前端目录
-cd myblog-frontend-react
+# 使用 Make（推荐）
+make init          # 首次运行：启动容器 + 执行迁移
 
-# 安装依赖
-npm install
-
-# 启动开发服务
-npm run dev
-# → 前端: http://localhost:5173
+# 或手动使用 Docker Compose
+docker compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml exec backend python manage.py migrate
 ```
 
-### 4）创建首篇文章
+### 4）创建管理员并开始创作内容
 
--   访问 `http://127.0.0.1:8000/admin`
--   使用刚创建的超级用户登录
--   创建 **Category**、**Tag** 与 **Post**（发布前取消“草稿”勾选）
+```bash
+make superuser     # 根据提示创建管理员账号
+```
+
+然后访问：
+
+-   🌐 **前端**: http://localhost:5173
+-   💻 **后端 API**: http://localhost:8000/api/
+-   🔐 **管理后台**: http://localhost:8000/admin/
+
+### 常用开发命令
+
+```bash
+make dev-up-d           # 后台启动
+make dev-down           # 停止所有容器
+make dev-logs           # 查看日志
+make dev-rebuild        # 修改依赖后重新构建
+make shell              # 进入后端容器 shell
+make migrate            # 执行数据库迁移
+make help               # 显示所有可用命令
+```
 
 ---
 
