@@ -20,24 +20,24 @@ server {
     }
 }
 
-# www.wangshixin.me -> wangshixin.me 重定向
+# wangshixin.me -> www.wangshixin.me 重定向
 server {
     listen 443 ssl;
     http2 on;
-    server_name www.wangshixin.me;
+    server_name wangshixin.me;
 
     ssl_certificate /etc/nginx/ssl/wangshixin.me.crt;
     ssl_certificate_key /etc/nginx/ssl/wangshixin.me.key;
     ssl_protocols TLSv1.2 TLSv1.3;
 
-    return 301 https://wangshixin.me$request_uri;
+    return 301 https://www.wangshixin.me$request_uri;
 }
 
-# 主站 HTTPS 配置 (wangshixin.me)
+# 主站 HTTPS 配置 (www.wangshixin.me)
 server {
     listen 443 ssl;
     http2 on;
-    server_name wangshixin.me;
+    server_name www.wangshixin.me;
 
     # 上传文件大小限制（20MB）
     client_max_body_size 20M;
