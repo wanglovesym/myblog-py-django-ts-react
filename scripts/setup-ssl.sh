@@ -96,7 +96,7 @@ chmod 644 nginx/ssl/*.pem
 
 # 更新 nginx 配置使用生产配置（带 SSL）
 log_info "更新 Nginx 配置..."
-cp nginx/conf.d/production.conf nginx/conf.d/default.conf
+cp nginx/conf.d/production.conf.ssl nginx/conf.d/default.conf
 
 # 重启服务
 log_info "重启服务..."

@@ -22,7 +22,8 @@ server {
 
 # HTTPS 主配置
 server {
-    listen 443 ssl http2;
+    listen 443 ssl;
+    http2 on;
     server_name api.wangshixin.me wangshixin.me www.wangshixin.me;
 
     # 上传文件大小限制（20MB）
