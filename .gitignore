@@ -7,6 +7,7 @@ myblog-backend-django/env/
 myblog-backend-django/**/__pycache__/
 myblog-backend-django/**/*.pyc
 myblog-backend-django/staticfiles/
+myblog-backend-django/media/
 **/staticfiles/
 
 # Django 开发常见临时文件
@@ -38,7 +39,6 @@ myblog-frontend-react/tsconfig.tsbuildinfo
 # IDE
 .vscode/
 .idea/
-.DS_Storemyblog-backend-django/media/
 
 # macOS
 .DS_Store
