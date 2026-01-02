@@ -113,10 +113,10 @@ services:
         image: nginx:1.27-alpine # 轻量 Nginx 镜像
         container_name: myblog-proxy
 
-        # 对外公开端口
+        # 对外公开端口（避免与其他项目冲突，使用 8080/8443）
         ports:
-            - "80:80" # HTTP 入口（生产环境）
-            - "443:443" # HTTPS 入口（开启 SSL 后）
+            - "8080:80" # HTTP 入口
+            - "8443:443" # HTTPS 入口
 
         # 挂载自定义配置
         volumes:
