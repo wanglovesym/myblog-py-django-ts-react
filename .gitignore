@@ -38,4 +38,4 @@ myblog-frontend-react/tsconfig.tsbuildinfo
 # IDE
 .vscode/
 .idea/
-.DS_Store
+.DS_Storemyblog-backend-django/media/
