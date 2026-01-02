@@ -46,7 +46,9 @@ COPY . .
 # 创建非 root 用户（安全最佳实践）
 # -m：创建用户主目录
 # appuser：用户名
+# 创建 staticfiles 目录并设置权限
 RUN useradd -m appuser && \
+    mkdir -p /app/staticfiles && \
     # 将 /app 目录的所有权给 appuser
     chown -R appuser:appuser /app
 

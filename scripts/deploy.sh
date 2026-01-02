@@ -89,9 +89,11 @@ sleep 15
 log_info "运行数据库迁移..."
 docker compose -f docker-compose.prod.yml exec -T backend python manage.py migrate --noinput
 
-# 收集静态文件
+# 收集静态文件（使用 root 用户以避免卷挂载权限问题）
 log_info "收集静态文件..."
-docker compose -f docker-compose.prod.yml exec -T backend python manage.py collectstatic --noinput
+docker compose -f docker-compose.prod.yml exec -T --user root backend python manage.py collectstatic --noinput
+# 修复静态文件权限，让 appuser 可以读取
+docker compose -f docker-compose.prod.yml exec -T --user root backend chown -R appuser:appuser /app/staticfiles
 
 # 检查服务状态
 log_info "检查服务状态..."
