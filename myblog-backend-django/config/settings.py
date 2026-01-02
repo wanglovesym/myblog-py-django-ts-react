@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     # 自定义app一定要放在最后
-    'blog'
+    'blog',
+    'project',  # 项目展示模块
 ]
 
 MIDDLEWARE = [
@@ -151,7 +152,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-ROOT_URLCONF = 'myblog.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -168,7 +169,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'myblog.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database

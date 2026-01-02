@@ -60,5 +60,5 @@ EXPOSE 8000
 # 使用 Gunicorn WSGI 服务器（比 runserver 性能更好）
 # --bind 0.0.0.0:8000：监听所有网络接口
 # --workers 3：启动 3 个工作进程（一般设置为 CPU 核心数 * 2 + 1）
-# myblog.wsgi:application：指定 WSGI 应用入口
-CMD ["gunicorn", "myblog.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+# config.wsgi:application：指定 WSGI 应用入口
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
