@@ -51,3 +51,49 @@ export interface Post {
     category: Category | null; // 分类可为空
     tags: Tag[]; // 标签可有多个
 }
+
+// ============================================================
+// 项目展示模块类型定义
+// ============================================================
+
+/**
+ * 技术栈接口
+ * 用于项目的技术标签展示
+ */
+export interface TechStack {
+    id: number;
+    name: string;
+    icon_url?: string;
+    official_url?: string;
+    color?: string;
+}
+
+/**
+ * 项目状态类型
+ * developing: 开发中
+ * completed: 已完成
+ * online: 已上线
+ * offline: 暂时下线
+ */
+export type ProjectStatus = "developing" | "completed" | "online" | "offline";
+
+/**
+ * 项目接口
+ * 用于项目展示页面
+ */
+export interface Project {
+    id: number;
+    title: string;
+    slug: string;
+    description: string;
+    content?: string; // 仅详情页返回
+    cover_image_url?: string;
+    github_url?: string;
+    demo_url?: string;
+    tech_stack: TechStack[];
+    status: ProjectStatus;
+    status_display: string; // 状态的中文显示文本
+    is_featured: boolean;
+    created_at: string;
+    updated_at?: string;
+}

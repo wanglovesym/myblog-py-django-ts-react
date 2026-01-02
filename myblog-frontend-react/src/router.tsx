@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import Home from "./pages/Home";
 import Blog from "./pages/Blog";
 import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
 import Post from "./pages/Post";
 import SearchResult from "./pages/SearchResult";
 import Header from './components/Header';
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
             {
                 path: "/projects",
                 element: <Projects />
+            },
+            {
+                path: "/project/:slug",
+                element: <ProjectDetail />
             },
             {
                 path: "/post/:slug",
