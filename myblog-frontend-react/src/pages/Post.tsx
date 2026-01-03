@@ -1,59 +1,25 @@
-// src/pages/PostPage.tsx
+// src/pages/Post.tsx
+// 博客文章详情页面
 
 import { useEffect, useState } from 'react';
 import type { Post } from '../types';
 import axios from 'axios';
-// useParams: 从路由参数中提取动态部分（如 :slug）
 import { useParams } from 'react-router-dom';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
-// 引入 API 配置：统一管理后端地址
 import { API_URL } from '../config/api';
-
-// 配置 marked 支持 ==高亮== 语法
-marked.use({
-    extensions: [{
-        name: 'highlight',
-        level: 'inline',
-        start(src: string) { return src.match(/==/)?.index; },
-        tokenizer(src: string) {
-            const rule = /^==([^=]+)==/;
-            const match = rule.exec(src);
-            if (match) {
-                return {
-                    type: 'highlight',
-                    raw: match[0],
-                    text: match[1].trim()
-                };
-            }
-        },
-        renderer(token: any) {
-            return `<mark>${token.text}</mark>`;
-        }
-    }]
-});
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 export default function Post() {
-    // 用于请求 /api/posts/${slug}/
     const { slug } = useParams<{ slug: string }>();
     const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
-    const [htmlContent, setHtmlContent] = useState<string>('');
 
     useEffect(() => {
         if (!slug) return;
 
         const fetchPost = async () => {
             try {
-                // 使用动态 API 地址，slug 是文章的唯一标识（如 'my-first-post'）
                 const response = await axios.get<Post>(`${API_URL}/posts/${slug}/`);
-                const postData = response.data;
                 setPost(response.data);
-
-                // 转换 Markdown 为 HTML 并进行消毒
-                const rawHtml = await marked.parse(postData.content || '');
-                const cleanHtml = DOMPurify.sanitize(rawHtml);
-                setHtmlContent(cleanHtml);
             } catch (error) {
                 console.error('获取文章详情失败:', error);
             } finally {
@@ -99,11 +65,9 @@ export default function Post() {
                     </a>
                 ))}
             </div>
-            {/* Post Detail */}
-            <div
-                className="prose mt-4 dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: htmlContent }} // 使用预渲染的 HTML
-            />
+
+            {/* Post Detail - 使用统一的 Markdown 渲染组件 */}
+            <MarkdownRenderer content={post.content || ''} className="mt-6" />
         </article>
     );
 }

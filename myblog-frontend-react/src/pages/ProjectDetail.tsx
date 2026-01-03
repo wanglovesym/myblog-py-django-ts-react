@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import type { Project } from '../types';
 import axios from 'axios';
 import { API_URL } from '../config/api';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 // 状态标签颜色映射
 const statusColors: Record<string, string> = {
@@ -169,21 +170,11 @@ export default function ProjectDetail() {
                 </div>
             </div>
 
-            {/* 详细内容 */}
+            {/* 详细内容 - 使用统一的 Markdown 渲染组件 */}
             {project.content && (
                 <div className="pt-8 border-t border-gray-200 dark:border-gray-700">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">项目详情</h2>
-                    <div className="prose prose-lg dark:prose-invert max-w-none
-                                  prose-headings:text-gray-900 dark:prose-headings:text-white
-                                  prose-p:text-gray-600 dark:prose-p:text-gray-400
-                                  prose-a:text-blue-600 dark:prose-a:text-blue-400
-                                  prose-code:text-pink-600 dark:prose-code:text-pink-400
-                                  prose-pre:bg-gray-900 dark:prose-pre:bg-gray-800">
-                        {/* 简单文本渲染，后续可以替换为 Markdown 渲染器 */}
-                        <div className="whitespace-pre-wrap text-gray-600 dark:text-gray-400">
-                            {project.content}
-                        </div>
-                    </div>
+                    <MarkdownRenderer content={project.content} />
                 </div>
             )}
         </div>
