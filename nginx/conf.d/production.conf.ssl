@@ -121,6 +121,13 @@ server {
         add_header Cache-Control "public, immutable";
     }
 
+    # 媒体文件（用户上传）
+    location /media/ {
+        alias /app/media/;
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
     # Django Admin
     location /admin/ {
         proxy_pass http://backend:8000;
@@ -130,19 +137,13 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # API 接口
+    # API 接口 (CORS 由 Django 处理)
     location /api/ {
         proxy_pass http://backend:8000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-
-        # CORS 头
-        add_header 'Access-Control-Allow-Origin' '$http_origin' always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
-        add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
-        add_header 'Access-Control-Allow-Credentials' 'true' always;
     }
 
     # 根路径重定向到主站
