@@ -91,7 +91,7 @@ services:
         # 挂载静态文件卷：用于 Django collectstatic 结果共享给 proxy 提供 /static/
         volumes:
             - static_files:/app/staticfiles # STATIC_ROOT 实际路径
-            - media_files:/app/media # MEDIA_ROOT 用户上传文件
+            - ./myblog-backend-django/media:/app/media # MEDIA_ROOT 用户上传文件（bind mount）
 
     # ========== 前端服务（Nginx 静态站） ==========
     frontend:
@@ -128,7 +128,7 @@ services:
             - ./nginx/conf.d:/etc/nginx/conf.d:ro # 站点配置
             - ./nginx/ssl:/etc/nginx/ssl:ro # SSL 证书
             - static_files:/app/staticfiles:ro # Django 静态文件
-            - media_files:/app/media:ro # 用户上传文件
+            - ./myblog-backend-django/media:/app/media:ro # 用户上传文件（bind mount）
             - /var/www/certbot:/var/www/certbot # ACME 验证
 
         # 依赖：等待前后端服务就绪
@@ -165,5 +165,5 @@ volumes:
     # 静态文件卷（Django collectstatic 输出）
     static_files:
 
-    # 媒体文件卷（用户上传文件）
-    media_files:
+    # 媒体文件使用 bind mount（见 backend 和 proxy 配置）
+    # 路径: ./myblog-backend-django/media:/app/media
